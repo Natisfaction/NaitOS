@@ -39,9 +39,9 @@ int ScreenY;
 static char *vidmem = (char*)0xB8000;
 static char *rawmem = (char*)0xB8000;
 
-// ---------------------------
-// ADESSO CREO LE MIE FUNZIONI
-// ---------------------------
+// ---------------------------------
+//    ADESSO CREO LE MIE FUNZIONI
+// ---------------------------------
 
 //FUNZIONE PER SCRIVERE UN CARATTERE (ATTUALMENTE INUTILE)
 
