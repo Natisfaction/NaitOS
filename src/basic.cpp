@@ -1,8 +1,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-//QUI DEFINISCO LE COSE BASILARI
-
 //COLORI (ESADECIMALE)
 
 const int BLACK         =   0x0;
@@ -27,7 +25,7 @@ const int WHITE         =   0xF;
 const int FALSE         =   0;
 const int TRUE          =   1;
 
-//SCHERMO
+//SCHERMO (DECIMALE)
 
 const int WIDTH    =   80;
 const int HEIGHT   =   25;
