@@ -1,0 +1,1 @@
+cat "build/boot.bin" "build/full_kernel.bin" "build/fine.bin" > "OS/NaitOS.bin"
