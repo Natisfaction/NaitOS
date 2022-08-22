@@ -1,6 +1,6 @@
 #include "basic.c"
 
 extern "C" void _start(){
-    //KERNEL
+    cls();
     return;
 }
