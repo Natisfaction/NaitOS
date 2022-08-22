@@ -36,7 +36,6 @@ int ScreenX;
 int ScreenY;
 
 static char *vidmem = (char*)0xB8000;
-static char *rawmem = (char*)0xB8000;
 
 // ---------------------------------
 //            FUNZIONI
@@ -49,20 +48,9 @@ void putc(char *ch){
     return;
 }
 
-//FUNZIONE PRINT (SCRIVE UNA STRINGA, CON COLORE)
-
-void print(char *str,int colore){       //SERVE LA FRASE DA SCRIVERE E IL COLORE
-    char *vidmem = (char*)0xB8000;
-    while(*str != 0){                   //FINCHE' NON ARRIVO ALLA FINE DELLA FRASE (NULL)
-        *vidmem++ = *str++;             //INCREMENTIAMO LA MEMORIA VIDEO
-        *vidmem++ = colore;             //E ASSIEME A QUELLA ANCHE IL COLORE
-    }
-    return;
-}
-
 //FUNZIONE PER SPOSTARE IL CURSORE
 
-//DIVEVRTIMENTO CON L'INLINE ASSEMBLER PER INIZIALIZZARE UN PO DI COSUCCE
+//DIVERTIMENTO CON L'INLINE ASSEMBLER PER INIZIALIZZARE UN PO DI COSUCCE
 
 static inline void outb(unsigned short port, unsigned char value){      //PER MOSTRARE IL PUNTATORE
     __asm volatile("OUTB %0, %1" : : "a"(value), "Nd"(port));           //QUI CI SI DIVERTE
@@ -71,7 +59,7 @@ static inline void outb(unsigned short port, unsigned char value){      //PER MO
 
 static inline unsigned char inb(unsigned short port){                   //PER NASCONDERE IL PUNTATORE
     unsigned char ret;                                                  //SERVE UN CARATTERE DI RITORNO
-    __asm volatile("inb %1, %0" : "=a"(ret) : "Nd"(port) );             //DIVERTIMENTO ASSICURATO
+    __asm volatile("INB %1, %0" : "=a"(ret) : "Nd"(port) );             //DIVERTIMENTO ASSICURATO
     return ret;                                                         //CARATTERE DI RITORNO
     }
 
@@ -85,6 +73,20 @@ void setcursor(int x, int y){
     outb(0x3D4,0x0E);
     outb(0x3D5,((uint8_t)((position >> 8) & 0xFF)));
     }
+
+//FUNZIONE PRINT (SCRIVE UNA STRINGA, CON COLORE)
+
+void print(char *str,int colore){       //SERVE LA FRASE DA SCRIVERE E IL COLORE
+    int x = 0, y = 0;
+    char *vidmem = (char*)0xB8000;      //PUNTATORE ALLA MEMORIA VIDEO
+    while(*str != 0){                   //FINCHE' NON ARRIVO ALLA FINE DELLA FRASE (NULL)
+        *vidmem++ = *str++;             //INCREMENTIAMO LA MEMORIA VIDEO
+        *vidmem++ = colore;             //E ASSIEME A QUELLA ANCHE IL COLORE
+        x++;
+        setcursor(x,y);
+    }
+    return;
+}
 
 //FUNZIONE PER IL CLEARSCREEN
 
