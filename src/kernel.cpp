@@ -1,8 +1,6 @@
 #include "basic.c"
 
 extern "C" void _start(){
-    print("Hello Kernel!",WHITE);
-    cls();
-    print("Hi",BLUE);
+    //KERNEL
     return;
 }
