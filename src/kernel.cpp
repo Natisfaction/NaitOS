@@ -3,8 +3,6 @@
 //Add background!
 
 extern "C" void _start(){
-    print("Hi from kernel!",YELLOW);
-    cls();
-    print("Hi again!",BLUE);
+    print("Hi from kernel!",BLACK,WHITE);
     return;
 }
