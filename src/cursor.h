@@ -5,8 +5,8 @@
 
 //SCHERMO E CURSORE (DECIMALE)
 
-const int WIDTH         =   80;
-const int HEIGHT        =   25;
+#define WIDTH  80
+#define HEIGHT 25
 
 int ScreenX;
 int ScreenY;
