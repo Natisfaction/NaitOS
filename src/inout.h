@@ -24,26 +24,28 @@ const int LIGHT_PURPLE  =   0xD;
 const int YELLOW        =   0xE;
 const int WHITE         =   0xF;
 
+volatile char *video = (char*)0xB8000;
+
 //FUNZIONE PRINT (SCRIVE UNA STRINGA, CON COLORE)
 
 void print(char *str,int foreground,int background){        //SERVE LA FRASE DA SCRIVERE E IL COLORE
-    int colore = background * 16 + foreground;              //PER OTTENERE IL COLORE DI ENTRAMBI BASTA SPOSTARE IL BACKGROUND A SINISTRA E IL FOREGROUND A DESTRA
-    int x = 0, y = 0;
-    char *vidmem = (char*)0xB8000;                          //PUNTATORE ALLA MEMORIA VIDEO
+    int colore = (background * 16) + foreground;            //PER OTTENERE IL COLORE DI ENTRAMBI BASTA SPOSTARE IL BACKGROUND A SINISTRA E IL FOREGROUND A DESTRA
+    int xcoord = 0, ycoord = 0;
+    volatile char *video = (char*)0xB8000;
     while(*str != 0){                                       //FINCHE' NON ARRIVO ALLA FINE DELLA FRASE (NULL)
-        *vidmem++ = *str++;                                 //INCREMENTIAMO LA MEMORIA VIDEO
-        *vidmem++ = colore;                                 //E ASSIEME A QUELLA ANCHE IL COLORE
-        x++;
+        *video++ = *str++;                                  //INCREMENTIAMO LA MEMORIA VIDEO
+        *video++ = colore;                                  //E ASSIEME A QUELLA ANCHE IL COLORE
+        xcoord++;
         switch(x){                                          //SE LE RIGHE SONO FINITE VAI A CAPORIGA
-            case 80:
-                x = 0;
-                y++;
+            case WIDTH:
+                xcoord = 0;
+                ycoord++;
                 break;
             default:
                 break;
         }
     }
-    set_cursor(x,y);
+    set_cursor(xcoord,ycoord);
     return;
 }
 
@@ -58,3 +60,5 @@ void cls(void){
     set_cursor(0,0);
     return;
 }
+
+//FUNZIONE PER IL NEWLINE

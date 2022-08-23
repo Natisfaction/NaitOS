@@ -11,8 +11,6 @@ const int HEIGHT        =   25;
 int ScreenX;
 int ScreenY;
 
-static char *vidmem     =   (char*)0xB8000;
-
 static uint16_t x       =   0;
 static uint16_t y       =   0;
 
