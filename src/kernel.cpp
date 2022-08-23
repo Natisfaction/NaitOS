@@ -1,4 +1,8 @@
-#include "basic.cpp"
+#include <stdint.h>
+#include <stddef.h>
+#include "header/basic.h"
+#include "header/inout.h"
+#include "header/cursor.h"
 
 //Add background!
 
