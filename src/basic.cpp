@@ -25,15 +25,18 @@ const int WHITE         =   0xF;
 const int FALSE         =   0;
 const int TRUE          =   1;
 
-//SCHERMO (DECIMALE)
+//SCHERMO E CURSORE (DECIMALE)
 
-const int WIDTH    =   80;
-const int HEIGHT   =   25;
+const int WIDTH         =   80;
+const int HEIGHT        =   25;
 
 int ScreenX;
 int ScreenY;
 
-static char *vidmem = (char*)0xB8000;
+static char *vidmem     =   (char*)0xB8000;
+
+static uint16_t x       =   0;
+static uint16_t y       =   0;
 
 // ---------------------------------
 //            FUNZIONI
@@ -61,18 +64,24 @@ static inline unsigned char inb(unsigned short port){                   //PER NA
 
 //FUNZIONI IN C PER IL CURSORE
 
-void show_cursor(uint8_t x, uint8_t y){                                 //MOSTRA IL CURSORE
+void show_cursor(void){                                                 //MOSTRA IL CURSORE
+    uint8_t x = 15, y = 15;
 
 	outb(0x3D4, 0x0A);
 	outb(0x3D5, (inb(0x3D5) & 0xC0) | x);
  
 	outb(0x3D4, 0x0B);
 	outb(0x3D5, (inb(0x3D5) & 0xE0) | y);
+
+    return;
 }
 
-void hide_cursor(){                                                     //NASCONDE IL CURSORE
-	outb(0x3D4, 0x0A);
+void hide_cursor(void){
+
+	outb(0x3D4, 0x0A);                                                  //NASCONDE IL CURSORE
 	outb(0x3D5, 0x20);
+
+    return;
 }
 
 void set_cursor(uint16_t x, uint16_t y){                                //SPOSTA IL CURSORE IN UNA POSIZIONE PRECISA
@@ -80,8 +89,13 @@ void set_cursor(uint16_t x, uint16_t y){                                //SPOSTA
 
     outb(0x3D4, 0x0F);
     outb(0x3D5, ((uint8_t)(position & 0xFF)));
+
     outb(0x3D4, 0x0E);
     outb(0x3D5, ((uint8_t)((position >> 8) & 0xFF)));
+
+    show_cursor();
+
+    return;
 }
 
 uint16_t get_cursor_position(void){                                     //OTTIENI LA POSIZIONE DEL CURSORE
@@ -89,8 +103,10 @@ uint16_t get_cursor_position(void){                                     //OTTIEN
 
     outb(0x3D4, 0x0F);
     pos |= inb(0x3D5);
+
     outb(0x3D4, 0x0E);
     pos |= ((uint16_t)inb(0x3D5)) << 8;
+
     return pos;
 }
 
@@ -103,20 +119,19 @@ void print(char *str,int colore){       //SERVE LA FRASE DA SCRIVERE E IL COLORE
         *vidmem++ = *str++;             //INCREMENTIAMO LA MEMORIA VIDEO
         *vidmem++ = colore;             //E ASSIEME A QUELLA ANCHE IL COLORE
         x++;
-        set_cursor(x,y);
     }
+    set_cursor(x,y);
     return;
 }
 
 //FUNZIONE PER IL CLEARSCREEN
 
-void cls(){
-    int Xorg = 0, Yorg = 0;
+void cls(void){
     char *vidmem = (char*)0xB8000;      //PUNTATORE ALLA MEMORIA VIDEO
     for(int i=0; i<2000; i++){          //FINCHE' NON ARRIVO ALLA FINE DELLA FRASE (NULL)
         *vidmem++ = 0;                  //INCREMENTIAMO LA MEMORIA VIDEO
-        *vidmem++ = BLACK;              //E ASSIEME A QUELLA ANCHE IL COLORE
+        *vidmem++ = WHITE;              //E ASSIEME A QUELLA ANCHE IL COLORE
     }
-    set_cursor(Xorg,Yorg);                     //RIPRISTINIAMO IL CURSORE ALLA SUA POZIONE INIZIALE
+    set_cursor(0,0);
     return;
 }
