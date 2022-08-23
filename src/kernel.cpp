@@ -5,6 +5,6 @@
 #include "inout.h"
 
 extern "C" void _start(){
-    print("Hi",BLACK,WHITE);
+    print("Test print",GREEN,BLUE);
     return;
 }
