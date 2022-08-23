@@ -24,16 +24,15 @@ const int LIGHT_PURPLE  =   0xD;
 const int YELLOW        =   0xE;
 const int WHITE         =   0xF;
 
-volatile char *video = (char*)0xB8000;
-
 //FUNZIONE PRINT (SCRIVE UNA STRINGA, CON COLORE)
 
 void print(char *str,int foreground,int background){        //SERVE LA FRASE DA SCRIVERE E IL COLORE
     int colore = (background * 16) + foreground;            //PER OTTENERE IL COLORE DI ENTRAMBI BASTA SPOSTARE IL BACKGROUND A SINISTRA E IL FOREGROUND A DESTRA
-    int xcoord = 0, ycoord = 0;
+    int xcoord = 0, ycoord = 2;
+    volatile char *vidmem = (volatile char*)0xB8000+(2*(ycoord*WIDTH)+xcoord);
     while(*str != 0){                                       //FINCHE' NON ARRIVO ALLA FINE DELLA FRASE (NULL)
-        *video++ = *str++;                                  //INCREMENTIAMO LA MEMORIA VIDEO
-        *video++ = colore;                                  //E ASSIEME A QUELLA ANCHE IL COLORE
+        *vidmem++ = *str++;                                  //INCREMENTIAMO LA MEMORIA VIDEO
+        *vidmem++ = colore;                                  //E ASSIEME A QUELLA ANCHE IL COLORE
         xcoord++;
         switch(x){                                          //SE LE RIGHE SONO FINITE VAI A CAPORIGA
             case WIDTH:
