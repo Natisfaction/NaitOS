@@ -2,7 +2,19 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "header/basic.h"
+
+//SCHERMO E CURSORE (DECIMALE)
+
+const int WIDTH         =   80;
+const int HEIGHT        =   25;
+
+int ScreenX;
+int ScreenY;
+
+static char *vidmem     =   (char*)0xB8000;
+
+static uint16_t x       =   0;
+static uint16_t y       =   0;
 
 //DIVERTIMENTO CON L'INLINE ASSEMBLER PER INIZIALIZZARE UN PO DI COSUCCE SUL CURSORE
 
