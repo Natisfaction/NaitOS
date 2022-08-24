@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stdint.h>
 #include <stddef.h>
+#include "asmport.h"
 
 //SCHERMO E CURSORE (DECIMALE)
 
@@ -13,19 +13,6 @@ int ScreenY;
 
 static uint16_t x       =   0;
 static uint16_t y       =   0;
-
-//DIVERTIMENTO CON L'INLINE ASSEMBLER PER INIZIALIZZARE UN PO DI COSUCCE SUL CURSORE
-
-static inline void outb(unsigned short port, unsigned char value){      //PER MOSTRARE IL PUNTATORE
-    __asm volatile("OUTB %0, %1" : : "a"(value), "Nd"(port));           //QUI CI SI DIVERTE
-    return;
-}
-
-static inline unsigned char inb(unsigned short port){                   //PER NASCONDERE IL PUNTATORE
-    unsigned char ret;                                                  //SERVE UN CARATTERE DI RITORNO
-    __asm volatile("INB %1, %0" : "=a"(ret) : "Nd"(port) );             //DIVERTIMENTO ASSICURATO
-    return ret;                                                         //CARATTERE DI RITORNO
-}
 
 //FUNZIONI IN C PER IL CURSORE
 

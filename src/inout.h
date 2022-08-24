@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <stddef.h>
 #include <stddef.h>
 
 #include "cursor.h"
@@ -36,7 +36,7 @@
 
 #define VGA (unsigned char*)0xB8000
 
-void print(char *str,int foreground,int background,int coloumn,int row){
+int print(char *str,int foreground,int background,int coloumn,int row){
     int colore = (background * 16) + foreground;                //PER OTTENERE IL COLORE DI ENTRAMBI BASTA SPOSTARE IL BACKGROUND A SINISTRA E IL FOREGROUND A DESTRA
     unsigned char *vidmem = VGA+(2*(row*WIDTH)+coloumn);
     while(*str != 0){                                           //FINCHE' NON ARRIVO ALLA FINE DELLA FRASE (NULL)
@@ -47,12 +47,11 @@ void print(char *str,int foreground,int background,int coloumn,int row){
             coloumn = 0;
             row++;
         }
+        //set_cursor(coloumn,row);                                //E PORTA IL CURSORE DOVE IL TESTO E' TERMINATO
     }
-    set_cursor(coloumn,row);                                    //E PORTA IL CURSORE DOVE IL TESTO E' TERMINATO
-    return;                                                     //STILL WORKING...
+    int pos = ((row*WIDTH)+coloumn);
+    return coloumn,row;
 }
-
-//FUNZIONE PRINTF (PER LA GUI RISPETTANDO I COLORI)
 
 //FUNZIONE PER IL CLEARSCREEN
 
