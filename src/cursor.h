@@ -29,7 +29,7 @@ static inline unsigned char inb(unsigned short port){                   //PER NA
 
 //FUNZIONI IN C PER IL CURSORE
 
-void show_cursor(void){                                                 //MOSTRA IL CURSORE
+void show_cursor(){                                                 //MOSTRA IL CURSORE
     uint8_t x = 15, y = 15;
 
 	outb(0x3D4, 0x0A);
@@ -41,7 +41,7 @@ void show_cursor(void){                                                 //MOSTRA
     return;
 }
 
-void hide_cursor(void){
+void hide_cursor(){
 
 	outb(0x3D4, 0x0A);                                                  //NASCONDE IL CURSORE
 	outb(0x3D5, 0x20);
@@ -50,7 +50,7 @@ void hide_cursor(void){
 }
 
 void set_cursor(uint16_t x, uint16_t y){                                //SPOSTA IL CURSORE IN UNA POSIZIONE PRECISA
-    uint16_t position = y * WIDTH + x;
+    uint16_t position = (y*WIDTH+x);
 
     outb(0x3D4, 0x0F);
     outb(0x3D5, ((uint8_t)(position & 0xFF)));
@@ -63,7 +63,7 @@ void set_cursor(uint16_t x, uint16_t y){                                //SPOSTA
     return;
 }
 
-uint16_t get_cursor_position(void){                                     //OTTIENI LA POSIZIONE DEL CURSORE
+uint16_t get_cursor_position(){                                     //OTTIENI LA POSIZIONE DEL CURSORE
     uint16_t pos = 0;
 
     outb(0x3D4, 0x0F);
