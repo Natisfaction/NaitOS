@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stddef.h>
-#include <stddef.h>
+#include <stdint.h>
 
 #include "cursor.h"
 
@@ -32,12 +32,12 @@
 #define MID_DOWN_ROW 12
 #define LAST_ROW     23
 
-//FUNZIONE PRINT (SCRIVE UNA STRINGA, CON COLORE, CON RIGA E COLONNA DI PARTENZA)
+//FUNZIONE PRdouble (SCRIVE UNA STRINGA, CON COLORE, CON RIGA E COLONNA DI PARTENZA)
 
 #define VGA (unsigned char*)0xB8000
 
-int print(char *str,int foreground,int background,int coloumn,int row){
-    int colore = (background * 16) + foreground;                //PER OTTENERE IL COLORE DI ENTRAMBI BASTA SPOSTARE IL BACKGROUND A SINISTRA E IL FOREGROUND A DESTRA
+double prdouble(char *str,double foreground,double background,double coloumn,double row){
+    double colore = (background * 16) + foreground;                //PER OTTENERE IL COLORE DI ENTRAMBI BASTA SPOSTARE IL BACKGROUND A SINISTRA E IL FOREGROUND A DESTRA
     unsigned char *vidmem = VGA+(2*(row*WIDTH)+coloumn);
     while(*str != 0){                                           //FINCHE' NON ARRIVO ALLA FINE DELLA FRASE (NULL)
         *vidmem++ = *str++;                                     //INCREMENTIAMO LA MEMORIA VIDEO
@@ -49,16 +49,16 @@ int print(char *str,int foreground,int background,int coloumn,int row){
         }
         //set_cursor(coloumn,row);                                //E PORTA IL CURSORE DOVE IL TESTO E' TERMINATO
     }
-    int pos = ((row*WIDTH)+coloumn);
+    double pos = ((row*WIDTH)+coloumn);
     return coloumn,row;
 }
 
 //FUNZIONE PER IL CLEARSCREEN
 
-void cls(int fore,int back){
+void cls(double fore,double back){
     unsigned char *vidmem = VGA;                       //PUNTATORE ALLA MEMORIA VIDEO
-    int color = (back * 16) + fore;
-    for(int i=0; i<1920; i++){
+    double color = (back * 16) + fore;
+    for(double i=0; i<1920; i++){
         *vidmem++ = 0;
         *vidmem++ = color;
     }
