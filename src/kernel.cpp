@@ -1,6 +1,8 @@
-#include "inout.c"
+#include "basic.h"
 
-extern "C" void _start(void){
-    printf("Hello World from Kernel!");
+#define FIRST_LINE "                                     NaitOS                                     "
+#define LASTS_LINE "                                   MainScreen                                   "
+extern "C" void main(void){
+    print(FIRST_LINE,LIGHT_RED,RED);
     return;
 }
