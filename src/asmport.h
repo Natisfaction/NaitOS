@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stddef.h>
+#include <stdint.h>
 
 void outb(uint16_t port, uint8_t data){
 	__asm volatile("outb %0, %1" : : "a"(data), "Nd"(port));

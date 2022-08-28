@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stddef.h>
-#include "asmport.h"
 
 //SCHERMO E CURSORE (DECIMALE)
 

@@ -1,15 +1,6 @@
-#include <stddef.h>
-#include <stdint.h>
-#include <stdarg.h>
-
-#include "inout.h"
-#include "cursor.h"
-
-int hi = 4;
-
-//FIX PRINT NOT SHOWING CORRECTLY!
+#include "inout.c"
 
 extern "C" void _start(void){
-    printf("%d",hi);
+    printf("Hello World from Kernel!");
     return;
 }
