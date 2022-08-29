@@ -1,8 +1,9 @@
 #include "basic.h"
 
-#define FIRST_LINE "                                     NaitOS                                     "
-#define LASTS_LINE "                                   MainScreen                                   "
+const char* FIRST_LINE = "                                     NaitOS                                     ";
+const char* LASTS_LINE = "                                   MainScreen                                   ";
+
 extern "C" void main(void){
-    printn(-351);
+    prints("Hello Kernel!");
     return;
 }

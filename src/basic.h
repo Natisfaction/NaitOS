@@ -45,6 +45,7 @@ const unsigned HEIGHT   =   25;
 void putchar(int x, int y, char c){
     uint8_t* Screen = (uint8_t*)0xB8000;
     Screen[2 * (y * WIDTH + x)] = c;            //Il carattere sta nella posizione pari
+    return;
 }
 
 //Inserisce un colore ad una posizione specifica
@@ -52,6 +53,7 @@ void putchar(int x, int y, char c){
 void putcolor(int x, int y, uint8_t color){
     uint8_t* Screen = (uint8_t*)0xB8000;
     Screen[2 * (y * WIDTH + x) + 1] = color;    //Il colore sta nella posizione dispari
+    return;
 }
 
 //Funzione putc (unisce putcolor e putchar)
@@ -59,12 +61,6 @@ void putcolor(int x, int y, uint8_t color){
 void putc(char ch, int x, int y){
     putchar(x,y,ch);
     putcolor(x,y,DEFAULT);
-    return;
-}
-
-//Funzione puts (tanti putc, avranno più senso dopo)
-
-void puts(){
     return;
 }
 
@@ -112,6 +108,22 @@ void printn(int num){
                 putc(number,x,y);
             }
         }
+    }
+    return;
+}
+
+//Funzione di print per le stringhe
+
+void prints(const char* str){
+    int x = 0, y = 0;
+    while(*str != 0){
+        putc(*str,x,y);
+        x++;
+        if (x == WIDTH){
+            x = 0;
+            y++;
+        }
+        str++;
     }
     return;
 }

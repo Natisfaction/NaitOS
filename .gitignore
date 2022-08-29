@@ -1,9 +1,0 @@
-build\
-build/kernel.bin
-build/boot.bin
-build/fine.bin
-build/start_kern.o
-build/start_kern.o
-OS\
-OS/NaitOS.bin
-
