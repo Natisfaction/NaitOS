@@ -38,23 +38,77 @@ int ScreenY             =   25;
 
 // ======================== FUNZIONI ========================
 
-void print(const char* str, int foreg, int backg){
-    int color = (backg * 16) + foreg;
-    volatile char *VGA = (volatile char*)0xB8000;
-    while(*str){
-        *VGA++ = *str++;
-        *VGA++ = color;
+//Inserisce un carattere ad una posizione specifica
+
+void putchar(int x, int y, char c){
+    uint8_t* g_ScreenBuffer = (uint8_t*)0xB8000;
+    g_ScreenBuffer[2 * (y * WIDTH + x)] = c;            //Il carattere sta nella posizione pari
+}
+
+//Inserisce un colore ad una posizione specifica
+
+void putcolor(int x, int y, uint8_t color){
+    uint8_t* g_ScreenBuffer = (uint8_t*)0xB8000;
+    g_ScreenBuffer[2 * (y * WIDTH + x) + 1] = color;    //Il colore sta nella posizione dispari
+}
+
+//Clearscreen
+
+void cls(){
+    for (int y = 0; y < HEIGHT; y++)
+        for (int x = 0; x < WIDTH; x++)
+        {
+            putchar(x, y, '\0');
+            putcolor(x, y, 0xFA);
+        }
+}
+
+//Funzione printn (scrive i numeri)
+
+void printn(int num, int foreg, int backg){
+    int x = 0, y = 0;
+    int col = (backg * 16) + foreg;
+    char number;
+    int divisore = 1000000000, fnum = 0, exit = 0, risultato;   //Max 1 miliardo, altrimenti overflow
+    if(num == 0){
+        number = '0';
+        putchar(x,y,number);
+        putcolor(x,y,col);
+        exit = 1;
+    } else if(num < 0){
+        putchar(x,y,'-');
+        putcolor(x,y,col);
+        num *= -1;
+        x++;
+    }
+    while(divisore >= 10 && exit == 0){
+        risultato = num / divisore;
+        if (risultato == 0 && fnum == 0){
+            divisore = divisore / 10;
+        } else {
+            number = risultato + '0';
+            putchar(x,y,number);
+            putcolor(x,y,col);
+            num %= divisore;
+            divisore /= 10;
+            fnum = 1;
+            x++;
+            if (x == WIDTH){
+                x = 0;
+                y++;
+            }
+            if (divisore == 1){
+                number = num + '0';
+                putchar(x,y,number);
+                putcolor(x,y,col);
+            }
+        }
     }
     return;
 }
 
-void cls(){
-    volatile char *VGA = (volatile char*)0xB8000;
-    for (int i=0; i<HEIGHT; i++){
-        for (int j=0; i<WIDTH; i++){
-            *VGA++ = ' ';
-            *VGA++ = 0xC4;
-        }
-    }
+//Funzione prinf (print full)
+
+void printf(){
     return;
 }
