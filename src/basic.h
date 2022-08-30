@@ -146,21 +146,48 @@ void printn(int num){
 #define CHAR   4
 
 void printf(const char* fmt, ...){
-    int x = 0, y = 0;
-
-    int tipo = NORMAL;
-
     va_list args;
     va_start(args, fmt);
+
+    int x = 0, y = 0;
+
+    int tipo = START;
+
+    //Controllo se è stato specificato un tipo di dato valido
+
     while(*fmt){
         if(tipo == START){
-            if (*fmt == '%'){
+            if(*fmt == '%'){
                 tipo = NORMAL;
-            } else if(tipo == NORMAL){
-                //FINISICI DI IMPLEMENTARE DOPO
+                *fmt++;
+            } else {
+                break;
+            }
+        } else if(tipo == NORMAL){
+            if(*fmt == 'd' || *fmt == 'i'){
+                tipo = NUMBER;
+            } else if(*fmt == 's'){
+                tipo = STRING;
+            } else if(*fmt == 'c'){
+                tipo = CHAR;
+            } else {
+                break;
             }
         }
     }
+
+    //Adesso a seconda del tipo, stampo il carattere specificato
+
+    if(tipo == NUMBER){
+        printn(va_arg(args, int));
+    } else if(tipo == STRING){
+        puts(va_arg(args, const char*));
+    } else if(tipo == CHAR){
+        putc((char)va_arg(args, int),x,y)
+    } else {
+        putc('E',x,y);
+    }
+    
     va_end(args);
     return;
 }
