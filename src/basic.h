@@ -42,7 +42,8 @@ const unsigned HEIGHT   =   25;
 
 //Funzione putchar (inserisce un carattere in una posizione specifica)
 
-void putchar(int x, int y, char c){
+void putchar(int x, int y, char c)
+{
     uint8_t* Screen = (uint8_t*)0xB8000;
     Screen[2 * (y * WIDTH + x)] = c;            //Il carattere sta nella posizione pari
     return;
@@ -50,15 +51,17 @@ void putchar(int x, int y, char c){
 
 //Funzione putcolor (inserisce un colore in una posizione specifica)
 
-void putcolor(int x, int y, uint8_t color){
+void putcolor(int x, int y, uint8_t color)
+{
     uint8_t* Screen = (uint8_t*)0xB8000;
     Screen[2 * (y * WIDTH + x) + 1] = color;    //Il colore sta nella posizione dispari
     return;
 }
 
-//Funzione putc (unisce putcolor e putchar)
+//Funzione putc (scrive un carattere)
 
-void putc(char ch, int x, int y){
+void putc(char ch, int x, int y)
+{
     putchar(x,y,ch);
     putcolor(x,y,DEFAULT);
     return;
@@ -66,36 +69,16 @@ void putc(char ch, int x, int y){
 
 //Funzione puts (scrive una stringa)
 
-void puts(const char* string){
-    int x = 0, y = 0;
-    while (*string){
-        if(*string == '\n'){
-            x = 0;
-            y++;
-        } else if(*string == '\t'){
-            for (int i = 0; i < 3; i++)
-            {
-                putc(' ',x,y);
-                x++;
-            }
-        } else {
-            putc(*string,x,y);
-            x++;
-        }
-        *string++;
-        if (x == WIDTH){
-            x -= WIDTH;
-            y++;
-        }
-    }
-    return;
-}
+//Scrivila
 
 //Clearscreen
 
-void cls(){
-    for (int y = 0; y < HEIGHT; y++){
-        for (int x = 0; x < WIDTH; x++){
+void cls()
+{
+    for (int y = 0; y < HEIGHT; y++)
+    {
+        for (int x = 0; x < WIDTH; x++)
+        {
             putc('\0',x,y);
         }
     }
@@ -103,34 +86,40 @@ void cls(){
 
 //Funzione printn (scrive i numeri)
 
-void printn(int num){
+void printn(int num)
+{
     int x = 0, y = 0;
     char number;
     int divisore = 1000000000, fnum = 0, exit = 0, risultato;   //Max 1 miliardo, altrimenti overflow
     if(num == 0){                                               //Controlla se il numero è 0
         putc('0',x,y);
         exit = 1;
-    } else if(num < 0){                                         //Oppure se è negativo
+    } else if( num < 0 ){                                         //Oppure se è negativo
         putc('-',x,y);
         num *= -1;
         x++;
     }
-    while(divisore >= 10 && exit == 0){                         //E poi stampa
+    while(divisore >= 10 && exit == 0)
+    {
         risultato = num / divisore;
-        if (risultato == 0 && fnum == 0){
+        if (risultato == 0 && fnum == 0)
+        {
             divisore = divisore / 10;
-        } else {
+        } else 
+        {
             number = risultato + '0';
             putc(number,x,y);
             num %= divisore;
             divisore /= 10;
             fnum = 1;
             x++;
-            if (x == WIDTH){
+            if (x == WIDTH)
+            {
                 x = 0;
                 y++;
             }
-            if (divisore == 1){
+            if (divisore == 1)
+            {
                 number = num + '0';
                 putc(number,x,y);
             }
@@ -139,54 +128,14 @@ void printn(int num){
     return;
 }
 
-#define START  0
-#define NORMAL 1
-#define NUMBER 2
-#define STRING 3
-#define CHAR   4
-
-void printf(const char* fmt, ...){
+void printf(const char* fmt, ...)
+{
     va_list args;
     va_start(args, fmt);
 
     int x = 0, y = 0;
-
-    int tipo = START;
-
-    //Controllo se è stato specificato un tipo di dato valido
-
-    while(*fmt){
-        if(tipo == START){
-            if(*fmt == '%'){
-                tipo = NORMAL;
-                *fmt++;
-            } else {
-                break;
-            }
-        } else if(tipo == NORMAL){
-            if(*fmt == 'd' || *fmt == 'i'){
-                tipo = NUMBER;
-            } else if(*fmt == 's'){
-                tipo = STRING;
-            } else if(*fmt == 'c'){
-                tipo = CHAR;
-            } else {
-                break;
-            }
-        }
-    }
-
-    //Adesso a seconda del tipo, stampo il carattere specificato
-
-    if(tipo == NUMBER){
-        printn(va_arg(args, int));
-    } else if(tipo == STRING){
-        puts(va_arg(args, const char*));
-    } else if(tipo == CHAR){
-        putc((char)va_arg(args, int),x,y)
-    } else {
-        putc('E',x,y);
-    }
+    
+    //Spazio futuro per cose
     
     va_end(args);
     return;
