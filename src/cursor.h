@@ -1,11 +1,12 @@
 #pragma once
 
 #include <stddef.h>
+#include "asmport.h"
 
 //SCHERMO E CURSORE (DECIMALE)
 
-#define WIDTH  80
-#define HEIGHT 25
+const unsigned WIDTH    =   80;
+const unsigned HEIGHT   =   25;
 
 int ScreenX;
 int ScreenY;
