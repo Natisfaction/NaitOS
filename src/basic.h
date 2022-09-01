@@ -5,8 +5,6 @@
 #include <stdbool.h>
 #include <stdarg.h>
 
-#include "asmport.h"
-
 //COLORI (ESADECIMALE)
 
 #define BLACK        0x0
@@ -38,10 +36,7 @@
 #define WIDTH        80
 #define HEIGHT       25
 
-//Funzione printn (scrive i numeri)
-
 int ScreenX = 0, ScreenY = 0;
-
 char* VGA = (char*)0xB8000;
 
 //Dichiarazione delle funzioni
@@ -56,8 +51,7 @@ void putc(char c){
     VGA[2* (ScreenY * WIDTH + ScreenX)] = c;
     VGA[2* (ScreenY * WIDTH + ScreenX) + 1] = DEFAULT;
     ScreenX++;
-    if (ScreenX == WIDTH)
-    {
+    if (ScreenX == WIDTH){
         ScreenX = 0;
         ScreenY++;
     }
@@ -65,18 +59,15 @@ void putc(char c){
 }
 
 void puts(const char* str){
-    while (*str)
-    {
-        switch (*str)
-        {
+    while (*str){
+        switch (*str){
         case '\n':
             ScreenX = 0;
             ScreenY++;
             break;
         
         case '\t':
-            for (int i = 0; i < 3; i++)
-            {
+            for (int i = 0; i < 3; i++){
                 putc(' ');
             }
             break;
@@ -102,28 +93,20 @@ void printn(int num)
     if(num == 0){           //Controlla se il numero è 0
         putc('0');          //Allora in questo caso scrivi zero, ed esci
         exit = 1;
-    } else if( num < 0 ){   //Oppure se è negativo
+    } else if(num < 0){     //Oppure se è negativo
         putc('-');          //Metti un '-' davanti, trasforma il numero in positivo, e stampalo
         num *= -1;
     }
-    while(divisore >= 10 && exit == 0)
-    {
+    while(divisore >= 1 && exit == 0){
         risultato = num / divisore;
-        if (risultato == 0 && fnum == 0)
-        {
+        if(risultato == 0 && fnum == 0){
             divisore = divisore / 10;
-        } else 
-        {
+        } else {
             number = risultato + '0';
             putc(number);
             num %= divisore;
             divisore /= 10;
             fnum = 1;
-            if (divisore == 1)
-            {
-                number = num + '0';
-                putc(number);
-            }
         }
     }
     return;
@@ -132,54 +115,39 @@ void printn(int num)
 #define START  0
 #define INIT   1
 
-void printf(const char* fmt, ...)
-{
-    int stato = START;
-
+void printf(const char* fmt, ...){
     va_list args;
     va_start(args, fmt);
     
     while (*fmt){
-        switch (stato)
-        {
-        case START:
-            //Se non è ancora successo nulla, controllo se trovo il carattere "speciale"
-            switch (*fmt)
-            {
-            //Se lo trovo, mi preparo a riconoscere cosa dare in output
-            case '%':   stato = INIT;
-                        break;
-            //Altrimenti resetto lo stato, e scrivo il carattere
-            default:    putc(*fmt);
-                        break;
-            }
-            break;
-        
-        case INIT:
-            switch (*fmt)
-            {
+        switch (*fmt){
+        //Se lo trovo, mi preparo a riconoscere cosa dare in output
+        case '%':
+            fmt++;
+            switch (*fmt){
             //i/d Stampano entrambi un int
             case 'i':
             case 'd':   printn(va_arg(args, int));
-                        stato = START;
+                        fmt++;
                         break;
             //s Stampa una string
             case 's':   puts(va_arg(args, const char*));
-                        stato = START;
+                        fmt++;
                         break;
             //c Stampa un char
             case 'c':   putc((char)va_arg(args, int));
-                        stato = START;
+                        fmt++;
                         break;
             //Ignora in caso di carattere non consentito
-            default:    stato = START;
+            default:    fmt++;
                         break;
             }
-        default:    break;
+        //Altrimenti resetto lo stato, e scrivo il carattere
+        default:    putc(*fmt);
+                    break;
         }
         fmt++;
     }
-
     va_end(args);
     return;
 }
