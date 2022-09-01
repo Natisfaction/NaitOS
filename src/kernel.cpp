@@ -1,6 +1,14 @@
 #include "basic.h"
 
 extern "C" void __attribute((section(".entry"))) main(){
-    putc('H',0xF);
+    printf("Hello Kernel! %s","Test string");
+
+    //Loop infinito
+
+    while (TRUE)
+    {
+        continue;
+    }
+
     return;
 }

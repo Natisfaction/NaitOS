@@ -8,8 +8,7 @@
 const unsigned CWIDTH   =   80;
 const unsigned CHEIGHT  =   25;
 
-static int x       =   0;
-static int y       =   0;
+//Definisco le funzioni
 
 //FUNZIONI IN C PER IL CURSORE
 
@@ -28,9 +27,9 @@ void disable_cursor()
 	outb(0x3D5, 0x20);
 }
 
-void update_cursor(int x, int y)
+void update_cursor(int& ScreenX, int& ScreenY)
 {
-	uint16_t pos = y * CWIDTH + x;
+	uint16_t pos = ScreenX * CWIDTH + ScreenY;
  
 	outb(0x3D4, 0x0F);
 	outb(0x3D5, (uint8_t) (pos & 0xFF));

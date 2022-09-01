@@ -41,65 +41,152 @@
 //Funzione printn (scrive i numeri)
 
 int ScreenX = 0, ScreenY = 0;
+
 char* VGA = (char*)0xB8000;
 
-void putc(char c, int col){
+//Dichiarazione delle funzioni
+
+void putc(char c);
+void puts(const char* str);
+void printf(const char* fmt, ...);
+
+//Creazione delle funzioni
+
+void putc(char c){
     VGA[2* (ScreenY * WIDTH + ScreenX)] = c;
     VGA[2* (ScreenY * WIDTH + ScreenX) + 1] = DEFAULT;
     ScreenX++;
+    if (ScreenX == WIDTH)
+    {
+        ScreenX = 0;
+        ScreenY++;
+    }
     return;
 }
-// void printn(int num)
-// {
-//     static int x = 0, y = 0;
-//     static char number;
-//     static int divisore = 1000000000, fnum = 0, exit = 0, risultato;   //Max 1 miliardo, altrimenti overflow
-//     if(num == 0){                                               //Controlla se il numero è 0
-//         putc('0',x,y);
-//         exit = 1;
-//     } else if( num < 0 ){                                         //Oppure se è negativo
-//         putc('-',x,y);
-//         num *= -1;
-//         x++;
-//     }
-//     while(divisore >= 10 && exit == 0)
-//     {
-//         risultato = num / divisore;
-//         if (risultato == 0 && fnum == 0)
-//         {
-//             divisore = divisore / 10;
-//         } else 
-//         {
-//             number = risultato + '0';
-//             putc(number,x,y);
-//             num %= divisore;
-//             divisore /= 10;
-//             fnum = 1;
-//             x++;
-//             if (x == WIDTH)
-//             {
-//                 x = 0;
-//                 y++;
-//             }
-//             if (divisore == 1)
-//             {
-//                 number = num + '0';
-//                 putc(number,x,y);
-//             }
-//         }
-//     }
-//     return;
-// }
 
-// void printf(const char* fmt, ...)
-// {
-//     va_list args;
-//     va_start(args, fmt);
+void puts(const char* str){
+    while (*str)
+    {
+        switch (*str)
+        {
+        case '\n':
+            ScreenX = 0;
+            ScreenY++;
+            break;
+        
+        case '\t':
+            for (int i = 0; i < 3; i++)
+            {
+                putc(' ');
+            }
+            break;
 
-//     static int x = 0, y = 0;
+        case '\r':
+            ScreenX = 0;
+            ScreenY = 0;
+            break;
+
+        default:
+            putc(*str);
+            break;
+        }
+        *str++;
+    }
+    return;
+}
+
+void printn(int num)
+{
+    char number;
+    int divisore = 1000000000, fnum = 0, exit = 0, risultato;   //Max 1 miliardo, altrimenti overflow
+    if(num == 0){           //Controlla se il numero è 0
+        putc('0');          //Allora in questo caso scrivi zero, ed esci
+        exit = 1;
+    } else if( num < 0 ){   //Oppure se è negativo
+        putc('-');          //Metti un '-' davanti, trasforma il numero in positivo, e stampalo
+        num *= -1;
+    }
+    while(divisore >= 10 && exit == 0)
+    {
+        risultato = num / divisore;
+        if (risultato == 0 && fnum == 0)
+        {
+            divisore = divisore / 10;
+        } else 
+        {
+            number = risultato + '0';
+            putc(number);
+            num %= divisore;
+            divisore /= 10;
+            fnum = 1;
+            if (divisore == 1)
+            {
+                number = num + '0';
+                putc(number);
+            }
+        }
+    }
+    return;
+}
+
+#define START  0
+#define INIT   1
+
+void printf(const char* fmt, ...)
+{
+
+    int stato = START;
+
+    va_list args;
+    va_start(args, fmt);
     
-//     //Spazio futuro per cose
-    
-//     va_end(args);
-//     return;
-// }
+    while (*fmt){
+        switch (stato)
+        {
+        case START:
+            //Se non è ancora successo nulla, controllo se trovo il carattere "speciale"
+            switch (*fmt)
+            {
+            case '%':
+                //Se lo trovo, mi preparo a riconoscere cosa dare in output
+                stato = INIT;
+                break;
+            
+            default:
+                //Altrimenti resetto lo stato, e scrivo il carattere
+                stato = START;
+                putc(*fmt);
+                break;
+            }
+            break;
+        
+        case INIT:
+            switch (*fmt)
+            {
+            //i/d Stampano entrambi un int
+            case 'i':
+            case 'd':
+                printn(va_arg(args, int));
+                break;
+            //s Stampa una string
+            case 's':
+                puts(va_arg(args, const char*));
+                break;
+            //c Stampa un char
+            case 'c':
+                putc((char)va_arg(args, int));
+                break;
+            
+            default:
+                stato = START;
+                break;
+            }
+        default:
+            break;
+        }
+        fmt++;
+    }
+
+    va_end(args);
+    return;
+}
