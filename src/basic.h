@@ -134,7 +134,6 @@ void printn(int num)
 
 void printf(const char* fmt, ...)
 {
-
     int stato = START;
 
     va_list args;
@@ -147,16 +146,12 @@ void printf(const char* fmt, ...)
             //Se non è ancora successo nulla, controllo se trovo il carattere "speciale"
             switch (*fmt)
             {
-            case '%':
-                //Se lo trovo, mi preparo a riconoscere cosa dare in output
-                stato = INIT;
-                break;
-            
-            default:
-                //Altrimenti resetto lo stato, e scrivo il carattere
-                stato = START;
-                putc(*fmt);
-                break;
+            //Se lo trovo, mi preparo a riconoscere cosa dare in output
+            case '%':   stato = INIT;
+                        break;
+            //Altrimenti resetto lo stato, e scrivo il carattere
+            default:    putc(*fmt);
+                        break;
             }
             break;
         
@@ -165,24 +160,22 @@ void printf(const char* fmt, ...)
             {
             //i/d Stampano entrambi un int
             case 'i':
-            case 'd':
-                printn(va_arg(args, int));
-                break;
+            case 'd':   printn(va_arg(args, int));
+                        stato = START;
+                        break;
             //s Stampa una string
-            case 's':
-                puts(va_arg(args, const char*));
-                break;
+            case 's':   puts(va_arg(args, const char*));
+                        stato = START;
+                        break;
             //c Stampa un char
-            case 'c':
-                putc((char)va_arg(args, int));
-                break;
-            
-            default:
-                stato = START;
-                break;
+            case 'c':   putc((char)va_arg(args, int));
+                        stato = START;
+                        break;
+            //Ignora in caso di carattere non consentito
+            default:    stato = START;
+                        break;
             }
-        default:
-            break;
+        default:    break;
         }
         fmt++;
     }
