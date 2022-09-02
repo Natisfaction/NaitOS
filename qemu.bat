@@ -1,1 +1,1 @@
-qemu-system-x86_64 -drive format=raw,file="OS/NaitOS.img",index=0,if=floppy,  -m 128M
+qemu-system-i386 -fda "OS/NaitOS.img"

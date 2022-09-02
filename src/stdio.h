@@ -45,6 +45,7 @@ char* VGA = (char*)0xB8000;
 #define OCT         8
 #define DEC         10
 #define HEX         16
+#define HEXM        17
 
 //Dichiarazione delle funzioni
 
@@ -109,13 +110,13 @@ const char Numeri[] = "0123456789ABCDE";
 void print_unsigned(int u_num, int base){
     char buffer[32];
     int cambio = 0;
-    //Calcola ogni cifra del numero, e controlla se bisogna mettere una lettera (esadecimale)
+
     do{
         int risultato = u_num % base;
         u_num /= base;
         buffer[cambio++] = Numeri[risultato];
-    }while (u_num > 0);
-    //Ma i numeri messi nel buffer sono al contrario, quindi stampali dritti
+    } while(u_num > 0);
+
     while(--cambio >= 0){
         putc(buffer[cambio]);
     }
@@ -127,42 +128,55 @@ void print_unsigned(int u_num, int base){
 void printf(const char* fmt, ...){
     va_list args;
     va_start(args, fmt);
+
+    int num = 0, base = 0;
+
     while (*fmt){
         switch (*fmt){
         //Se lo trovo, mi preparo a riconoscere cosa dare in output
         case '%':
             fmt++;
             switch (*fmt){
+
             //i/d Stampano entrambi un numero con segno (nel caso fosse negativo)
             case 'i':
             case 'd':   print_signed(va_arg(args, int),DEC);
                         break;
+
             //u Stampa un numero senza segno
             case 'u':   print_unsigned(va_arg(args, int),DEC);
                         break;
+
             //s Stampa una string
             case 's':   puts(va_arg(args, const char*));
                         break;
+
             //c Stampa un char
             case 'c':   putc((char)va_arg(args, int));
                         break;
+
             //o Stampa un numero in base 8
             case 'o':   print_unsigned(va_arg(args, int),OCT);
                         break;
-            //x Stampa un numero in base 16
+
+            //x/X/p Stampano un numero in base 16 (anche i puntatori lavorano in esadecimale)
             case 'x':   print_unsigned(va_arg(args, int),HEX);
                         break;
+
             //% Stampa '%'
             case '%':   putc('%');
                         break;
+
             //Ignora in caso di carattere non consentito
             default:    break;
             }
-            break;
+        break;
+
         //Altrimenti resetto lo stato, e scrivo il carattere
         default:    putc(*fmt);
                     break;
         }
+        
         fmt++;
     }
     va_end(args);
