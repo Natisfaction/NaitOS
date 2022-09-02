@@ -12,13 +12,13 @@ const unsigned CHEIGHT  =   25;
 
 //FUNZIONI IN C PER IL CURSORE
 
-void enable_cursor()
+void enable_cursor(int first, int least)
 {
 	outb(0x3D4, 0x0A);
-	outb(0x3D5, (inb(0x3D5) & 0xC0) | 15);
+	outb(0x3D5, (inb(0x3D5) & 0xC0) | first);
  
 	outb(0x3D4, 0x0B);
-	outb(0x3D5, (inb(0x3D5) & 0xE0) | 15);
+	outb(0x3D5, (inb(0x3D5) & 0xE0) | least);
 }
 
 void disable_cursor()
@@ -35,4 +35,6 @@ void update_cursor(int& ScreenX, int& ScreenY)
 	outb(0x3D5, (uint8_t) (pos & 0xFF));
 	outb(0x3D4, 0x0E);
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+
+	enable_cursor(15,15);
 }

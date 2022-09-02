@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdarg.h>
 
+//#include "cursor.h"
 //Colori
 
 #define BLACK        0x0
@@ -45,15 +46,14 @@ char* VGA = (char*)0xB8000;
 #define OCT         8
 #define DEC         10
 #define HEX         16
-#define HEXM        17
 
 //Dichiarazione delle funzioni
 
 void putc(char c);
 void puts(const char* str);
-void printf(const char* fmt, ...);
 void print_signed(int s_num, int base);
 void print_unsigned(int u_num, int base);
+void printf(const char* fmt, ...);
 
 //Creazione delle funzioni
 
@@ -100,8 +100,13 @@ void print_signed(int s_num, int base){
     if(s_num < 0){     //Oppure se è negativo
         putc('-');     //Metti un '-' davanti, trasforma il numero in positivo, e stampalo
         s_num *= -1;
+        print_unsigned(s_num,base);
+    } else if(s_num > 0){
+        putc('+');
+        print_unsigned(s_num,base);
+    } else {
+        putc('0');
     }
-    print_unsigned(s_num,base);
     return;
 }
 
@@ -121,9 +126,6 @@ void print_unsigned(int u_num, int base){
         putc(buffer[cambio]);
     }
 }
-
-#define START  0
-#define INIT   1
 
 void printf(const char* fmt, ...){
     va_list args;
