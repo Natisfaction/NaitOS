@@ -1,6 +1,6 @@
 ;Sir Loader by Nait
 
-[ORG 7C00H]                            ;Indirizzo iniziale
+[ORG 7C00H]                             ;Indirizzo iniziale
 [BITS 16]                               ;Real mode = 16 bit
 KERNEL_LOCATION equ 0x1000              ;Indirizzo del kernel
 
