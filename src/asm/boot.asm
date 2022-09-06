@@ -1,12 +1,7 @@
-;Sir Loader by Nait
+[org 0x7c00]
+KERNEL_LOCATION equ 0x1000
 
-[ORG 7C00H]                             ;Indirizzo iniziale
-[BITS 16]                               ;Real mode = 16 bit
-KERNEL_LOCATION equ 0x1000              ;Indirizzo del kernel
-
-mov [BOOT_DISK], dl                     ;Salviamo l'indirizzo del disco         
-
-;Azzero alcuni registri e creo uno stack
+mov [BOOT_DISK], dl
 
 xor ax, ax
 mov es, ax
@@ -14,38 +9,35 @@ mov ds, ax
 mov bp, 0x8000
 mov sp, bp
 
-;Inizializzo il disco
-
 mov bx, KERNEL_LOCATION
-mov dh, 2
+mov dh, 20
 
-mov ah, 2
-mov al, dh
-mov ch, 0
-mov dh, 0
-mov cl, 2
+mov ah, 0x02
+mov al, dh 
+mov ch, 0x00
+mov dh, 0x00
+mov cl, 0x02
 mov dl, [BOOT_DISK]
-int 13h
+int 0x13                ; no error management, do your homework!
 
-;Clearscreen (passando in text mode)
+mov ah, 0x0
+mov al, 0x3
+int 0x10                ; text mode
 
-mov ah, 0
-mov al, 3
-int 10h
-
-;E ora si passa in protected mode (32 bit)
 
 CODE_SEG equ GDT_code - GDT_start
 DATA_SEG equ GDT_data - GDT_start
 
-cli                                         ;Spengo gli interrupt
-lgdt [GDT_descriptor]                       ;Global Decryptor Table
-mov eax, cr0                                ;Devo fare un or del registo CR0
+cli
+lgdt [GDT_descriptor]
+mov eax, cr0
 or eax, 1
 mov cr0, eax
-jmp CODE_SEG:start_protected_mode           ;E da qui, siamo in protected mode
-                                    
-BOOT_DISK: db 0                             ;Disco di boot (disco 0)
+jmp CODE_SEG:start_protected_mode
+
+jmp $
+
+BOOT_DISK: db 0
 
 GDT_start:
     GDT_null:
@@ -74,8 +66,6 @@ GDT_descriptor:
     dw GDT_end - GDT_start - 1
     dd GDT_start
 
-;E qui siamo ufficialmente a 32 bit
-
 [bits 32]
 start_protected_mode:
     mov ax, DATA_SEG
@@ -85,12 +75,10 @@ start_protected_mode:
 	mov fs, ax
 	mov gs, ax
 	
-    ;Quindi uno stack a 32 bit
-
-	mov ebp, 0x90000
+	mov ebp, 0x90000		; 32 bit stack base pointer
 	mov esp, ebp
 
-    jmp KERNEL_LOCATION                             ;E qui si va al kernel
+    jmp KERNEL_LOCATION
 
 times 510-($-$$) db 0              
 dw 0xaa55

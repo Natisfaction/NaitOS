@@ -4,6 +4,7 @@
 #include <stdarg.h>
 
 #include "basic.h"
+#include "cursor.h"
 
 #define BLACK         0x0
 #define BLUE          0x1
@@ -34,58 +35,9 @@
 
 int x = 0, y = 0;
 
-uint8_t inb(uint16_t port){
-    uint8_t ret;
-    __asm__ volatile( "inb {%[port], %[retreg] | %[retreg], %[port]}"
-                   : [retreg]"=a"(ret)
-                   : [port]"Nd"(port) );
-    return ret;
-}
-
-void outb(uint16_t port, uint8_t byte){
-    __asm__ volatile( "outb {%[byte], %[port] | %[port], %[byte]}"
-                   :
-                   : [byte]"a"(byte),
-                     [port]"Nd"(port) );
-}
-
-void enable_cursor(uint8_t cursor_start, uint8_t cursor_end){
-	outb(0x3D4, 0x0A);
-	outb(0x3D5, (inb(0x3D5) & 0xC0) | cursor_start);
- 
-	outb(0x3D4, 0x0B);
-	outb(0x3D5, (inb(0x3D5) & 0xE0) | cursor_end);
-}
-
-void disable_cursor(){
-	outb(0x3D4, 0x0A);
-	outb(0x3D5, 0x20);
-}
-
-void update_cursor(int x, int y){
-	uint16_t pos = y * 80 + x;
- 
-	outb(0x3D4, 0x0F);
-	outb(0x3D5, (uint8_t) (pos & 0xFF));
-	outb(0x3D4, 0x0E);
-	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
-}
-
 void putc(char c){
     char* VGA = (char*)0xB8000;
-    VGA[2* (y * WIDTH + x)] = c;
-    VGA[2* (y * WIDTH + x) + 1] = DEFAULT_COLOR;
-    x++;
-    if (x == WIDTH){
-        x = 0;
-        y++;
-    }
-    update_cursor(x,y);
-}
-
-void puts(const char* str){
-    while(*str){
-        switch(*str){
+    switch(c){
         case '\n':
             x = 0;
             y++;
@@ -93,7 +45,9 @@ void puts(const char* str){
         
         case '\t':
             for (size_t i = 0; i < 3; i++){
-                putc(' ');
+                VGA[2* (y * WIDTH + x)] = ' ';
+                VGA[2* (y * WIDTH + x) + 1] = DEFAULT_COLOR;
+                x++;
             }
             break;
 
@@ -103,9 +57,21 @@ void puts(const char* str){
             break;
         
         default:
-            putc(*str);
+            VGA[2* (y * WIDTH + x)] = c;
+            VGA[2* (y * WIDTH + x) + 1] = DEFAULT_COLOR;
+            x++;
             break;
         }
+    if (x == WIDTH){
+        x = 0;
+        y++;
+    }
+    update_cursor(x,y);
+}
+
+void puts(const char* str){
+    while(*str){
+        putc(*str);
         str++;
     }
 }
@@ -140,57 +106,59 @@ void print_signed(int s_num, int base){
     }
 }
 
-//void printf(const char* fmt, ...){
-//    va_list args;
-//    va_start(args, fmt);
-//
-//    while (*fmt){
-//        switch (*fmt){
-//        //Se lo trovo, mi preparo a riconoscere cosa dare in output
-//        case '%':
-//            fmt++;
-//            switch (*fmt){
-//
-//            //i/d Stampano entrambi un numero con segno (nel caso fosse negativo)
-//            case 'i':
-//            case 'd':   print_signed(va_arg(args, int),DEC);
-//                        break;
-//
-//            //u Stampa un numero senza segno
-//            case 'u':   print_unsigned(va_arg(args, int),DEC);
-//                        break;
-//
-//            //s Stampa una string
-//            case 's':   puts(va_arg(args, const char*));
-//                        break;
-//
-//            //c Stampa un char
-//            case 'c':   putc((char)va_arg(args, int));
-//                        break;
-//
-//            //o Stampa un numero in base 8
-//            case 'o':   print_unsigned(va_arg(args, int),OCT);
-//                        break;
-//
-//            //x/X/p Stampano un numero in base 16 (anche i puntatori lavorano in esadecimale)
-//            case 'x':   print_unsigned(va_arg(args, int),HEX);
-//                        break;
-//
-//            //% Stampa '%'
-//            case '%':   putc('%');
-//                        break;
-//
-//            //Ignora in caso di carattere non consentito
-//            default:    break;
-//            }
-//        break;
-//
-//        //Altrimenti resetto lo stato, e scrivo il carattere
-//        default:    putc(*fmt);
-//                    break;
-//        }
-//        
-//        fmt++;
-//    }
-//    va_end(args);
-//}
+void printf(const char* fmt, ...){
+    va_list args;
+    va_start(args, fmt);
+
+    while (*fmt){
+        switch (*fmt){
+        //Se lo trovo, mi preparo a riconoscere cosa dare in output
+        case '%':
+            fmt++;
+            switch (*fmt){
+
+            //i/d Stampano entrambi un numero con segno (nel caso fosse negativo)
+            case 'i':
+            case 'd':   print_signed(va_arg(args, int),DEC);
+                        break;
+
+            //u Stampa un numero senza segno
+            case 'u':   print_unsigned(va_arg(args, int),DEC);
+                        break;
+
+            //s Stampa una string
+            case 's':   puts(va_arg(args, const char*));
+                        break;
+
+            //c Stampa un char
+            case 'c':   putc((char)va_arg(args, int));
+                        break;
+
+            //o Stampa un numero in base 8
+            case 'o':   print_unsigned(va_arg(args, int),OCT);
+                        break;
+
+            //x/X/p Stampano un numero in base 16 (anche i puntatori lavorano in esadecimale)
+            case 'p':
+            case 'X':
+            case 'x':   print_unsigned(va_arg(args, int),HEX);
+                        break;
+
+            //% Stampa '%'
+            case '%':   putc('%');
+                        break;
+
+            //Ignora in caso di carattere non consentito
+            default:    break;
+            }
+        break;
+
+        //Altrimenti resetto lo stato, e scrivo il carattere
+        default:    putc(*fmt);
+                    break;
+        }
+        
+        fmt++;
+    }
+    va_end(args);
+}

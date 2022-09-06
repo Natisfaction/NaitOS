@@ -8,7 +8,9 @@ nasm -f elf "src/asm/start_kern.asm" -o "build/start_kern.o"
 
 i686-elf-gcc -ffreestanding -m32 -g -c "src/c/kernel.c" -o "build/kernel.o" -Wall
 i686-elf-gcc -ffreestanding -m32 -g -c "src/c/basic.c" -o "build/basic.o" -Wall
+i686-elf-gcc -ffreestanding -m32 -g -c "src/c/cursor.c" -o "build/cursor.o" -Wall
+i686-elf-gcc -ffreestanding -m32 -g -c "src/c/in_asm.c" -o "build/in_asm.o" -Wall
 
-i686-elf-ld -o "build/kernel.bin" -Ttext 0x1000 "build/start_kern.o" "build/basic.o" "build/kernel.o" --oformat=binary
+i686-elf-ld -o "build/kernel.bin" -Tlinker.ld "build/start_kern.o" "build/in_asm.o" "build/cursor.o" "build/basic.o" "build/kernel.o" --oformat=binary
 cat "build/boot.bin" "build/kernel.bin" > "OS/NaitOS.bin"
 qemu-system-i386 -fda "OS/NaitOS.bin"

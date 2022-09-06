@@ -2,7 +2,8 @@
 #include <stddef.h>
 
 #include "basic.h"
+#include "cursor.h"
 
-void _start(){
-    puts("Hello");
+void main(){
+    printf("Hello World!");
 }
