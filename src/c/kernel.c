@@ -4,5 +4,7 @@
 #include "stdio.h"
 
 void main(){
-    printf("Hello Kernel!");
+    DarkScreenInit();
+    
+    return;
 }

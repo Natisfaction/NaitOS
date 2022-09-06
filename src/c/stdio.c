@@ -23,8 +23,6 @@
 #define YELLOW        0xE
 #define WHITE         0xF
 
-#define DEFAULT_COLOR 0x1F
-
 #define WIDTH         80
 #define HEIGHT        25
 
@@ -33,28 +31,41 @@
 #define DEC           10
 #define HEX           16
 
-int x = 0, y = 0;
+int DEFAULT_COLOR  =  0x1F;
+int x = 0,  y = 0;
+
+//Cursore
 
 void enable_cursor(uint8_t cursor_start, uint8_t cursor_end){
 	outb(0x3D4, 0x0A);
 	outb(0x3D5, (inb(0x3D5) & 0xC0) | cursor_start);
- 
 	outb(0x3D4, 0x0B);
 	outb(0x3D5, (inb(0x3D5) & 0xE0) | cursor_end);
+
+    return;
 }
 
 void disable_cursor(){
 	outb(0x3D4, 0x0A);
 	outb(0x3D5, 0x20);
+
+    return;
 }
 
 void update_cursor(int x, int y){
-	uint16_t pos = y * 80 + x;
- 
+    uint16_t pos = y * WIDTH + x;
+    update_cursor_full(pos);
+
+    return;
+}
+
+void update_cursor_full(uint16_t pos){
 	outb(0x3D4, 0x0F);
 	outb(0x3D5, (uint8_t) (pos & 0xFF));
 	outb(0x3D4, 0x0E);
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+
+    return;
 }
 
 uint16_t get_cursor_position(){
@@ -63,8 +74,11 @@ uint16_t get_cursor_position(){
     pos |= inb(0x3D5);
     outb(0x3D4, 0x0E);
     pos |= ((uint16_t)inb(0x3D5)) << 8;
+
 	return pos;
 }
+
+//Carattere
 
 void putc(char c){
     char* VGA = (char*)0xB8000;
@@ -98,6 +112,24 @@ void putc(char c){
         y++;
     }
     update_cursor(x,y);
+
+    return;
+}
+
+void cls(int foreg, int backg){
+    DEFAULT_COLOR = (backg * 16) + foreg;
+    x = 0;
+    y = 0;
+    for (size_t j = 0; j < WIDTH; j++){
+        for (size_t k = 0; k < HEIGHT; k++){
+            putc(' ');
+        }
+    }
+    x = 0;
+    y = 0;
+    update_cursor(x,y);
+    
+    return;
 }
 
 void puts(const char* str){
@@ -105,6 +137,8 @@ void puts(const char* str){
         putc(*str);
         str++;
     }
+
+    return;
 }
 
 const char Numeri[] = "0123456789ABCDE";
@@ -122,6 +156,8 @@ void print_unsigned(int u_num, int base){
     while(--cambio >= 0){
         putc(buffer[cambio]);
     }
+
+    return;
 }
 
 void print_signed(int s_num, int base){
@@ -135,9 +171,12 @@ void print_signed(int s_num, int base){
     } else {
         putc('0');
     }
+
+    return;
 }
 
-void printf(const char* fmt, ...){
+void printf(const char* fmt, int foreg, int backg, ...){
+    DEFAULT_COLOR = (backg * 16) + foreg;
     va_list args;
     va_start(args, fmt);
 
@@ -192,4 +231,31 @@ void printf(const char* fmt, ...){
         fmt++;
     }
     va_end(args);
+
+    return;
+}
+
+//Main screen
+
+void DarkScreenInit(){
+    cls(BLUE,LIGHT_BLUE);
+    DEFAULT_COLOR = 0x1F;
+    printf("                                     NaitOS                                     ",LIGHT_BLUE,BLUE);
+    x = 0, y = 24;
+    printf("                                 Main OS Screen                                 ",LIGHT_BLUE,BLUE);
+    x = 0, y = 1;
+    update_cursor(x,y);
+
+    return;
+}
+
+void LightScreenInit(){
+    cls(LIGHT_GREEN,YELLOW);
+    printf("                                     NaitOS                                     ",YELLOW,LIGHT_GREEN);
+    x = 0, y = 24;
+    printf("                                 Main OS Screen                                 ",YELLOW,LIGHT_GREEN);
+    x = 0, y = 1;
+    update_cursor(x,y);
+
+    return;
 }
