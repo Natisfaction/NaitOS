@@ -1,9 +1,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "basic.h"
-#include "cursor.h"
+#include "stdio.h"
 
 void main(){
-    printf("Hello World!");
+    printf("Hello Kernel!");
 }
