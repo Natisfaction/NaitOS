@@ -44,3 +44,4 @@ void printf(const char* fmt, ...);
 void DarkScreenInit();
 
 void LightScreenInit();
+void ErrorScreenInit();

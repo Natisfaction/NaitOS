@@ -1,4 +1,4 @@
-#include "idt.h"
+#include "../header/idt.h"
 
 extern void irq0();
 extern void irq1();

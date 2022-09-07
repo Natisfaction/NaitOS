@@ -1,5 +1,5 @@
-#include "in_asm.h"
-#include "idt.h"
+#include "../header/in_asm.h"
+#include "../header/idt.h"
 
 extern void irq0();
 extern void irq1();

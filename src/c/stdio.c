@@ -3,8 +3,8 @@
 #include <stdbool.h>
 #include <stdarg.h>
 
-#include "stdio.h"
-#include "in_asm.h"
+#include "../header/stdio.h"
+#include "../header/in_asm.h"
 
 int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
@@ -235,6 +235,23 @@ void LightScreenInit(){
     x = 0, y = 1;
     DEFAULT_COLOR = 0xEA;
     update_cursor(x,y);
+
+    return;
+}
+
+void ErrorScreenInit(){
+    DEFAULT_COLOR = 0xC4;
+    cls();
+    DEFAULT_COLOR = 0x4C;
+    printf("                                     NaitOS                                     ");
+    x = 25, y = 11;
+    DEFAULT_COLOR = 0xC4;
+    printf("(X)\t\tError: ");
+    DEFAULT_COLOR = 0x4C;
+    x = 0, y = 24;
+    printf("                    OS Error Screen (maybe this is not good)                    ");
+    DEFAULT_COLOR = 0xC4;
+    x = 41, y = 11;
 
     return;
 }

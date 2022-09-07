@@ -1,14 +1,12 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "stdio.h"
-#include "gdt.h"
-#include "idt.h"
-#include "isr.h"
-#include "irq.h"
-
-int num = 9;
-int res;
+#include "../header/stdio.h"
+#include "../header/gdt.h"
+#include "../header/idt.h"
+#include "../header/isr.h"
+#include "../header/irq.h"
+#include "../header/timer.h"
 
 extern void main(){
     gdt_install();
@@ -16,8 +14,9 @@ extern void main(){
     isr_install();
     irq_install();
     __asm__ volatile("sti");
-    //res = num / 0;
     DarkScreenInit();
-    printf("Hello %s!","Kernel");
+    printf("Hello: ");
+    timer_handler(19);
+    printf("World");
     return;
 }

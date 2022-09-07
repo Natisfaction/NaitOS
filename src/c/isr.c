@@ -1,5 +1,5 @@
-#include "stdio.h"
-#include "idt.h"
+#include "../header/stdio.h"
+#include "../header/idt.h"
 #include <stddef.h>
 
 extern void isr0();
@@ -112,7 +112,9 @@ extern void fault_handler(struct regs *r)
 {
     if (r->int_no < 32)
     {
-		printf("%s",exception_messages[r->int_no]);
+		ErrorScreenInit();
+		printf("%s\n\t\t\t\t\t\t\tTry restarting the PC to fix the issue",exception_messages[r->int_no]);
+		disable_cursor();
 		for(;;);
     }
 }

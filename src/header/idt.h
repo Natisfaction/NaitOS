@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "in_asm.h"
+#include "../header/in_asm.h"
 
 extern void idt_load();
 void idt_set_gate(unsigned char num, unsigned long base, unsigned short sel, unsigned char flags);

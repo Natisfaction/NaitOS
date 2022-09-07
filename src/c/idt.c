@@ -1,4 +1,4 @@
-#include "idt.h"
+#include "../header/idt.h"
 
 struct idt_entry
 {

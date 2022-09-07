@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "in_asm.h"
+#include "../header/in_asm.h"
 
 extern void gdt_flush();
 void gdt_set_gate(int num, unsigned long base, unsigned long limit, unsigned char access, unsigned char gran);
