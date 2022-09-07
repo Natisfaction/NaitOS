@@ -1,16 +1,25 @@
-ENTRY(main)
 OUTPUT_FORMAT("binary")
-phys = 0x1000;
-
+ENTRY(main)
+phys = 0x00001000;
 SECTIONS
 {
-    . = phys;
-
-    .entry              : { __entry_start = .;      *(.entry)   }
-    .text               : { __text_start = .;       *(.text)    }
-    .data               : { __data_start = .;       *(.data)    }
-    .rodata             : { __rodata_start = .;     *(.rodata)  }
-    .bss                : { __bss_start = .;        *(.bss)     }
-    
-    __end = .;
+  .text phys : AT(phys) {
+    code = .;
+    *(.text)
+    *(.rodata)
+    . = ALIGN(4096);
+  }
+  .data : AT(phys + (data - code))
+  {
+    data = .;
+    *(.data)
+    . = ALIGN(4096);
+  }
+  .bss : AT(phys + (bss - code))
+  {
+    bss = .;
+    *(.bss)
+    . = ALIGN(4096);
+  }
+  end = .;
 }

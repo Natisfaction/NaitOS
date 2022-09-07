@@ -6,31 +6,6 @@
 #include "stdio.h"
 #include "in_asm.h"
 
-#define BLACK         0x0
-#define BLUE          0x1
-#define GREEN         0x2
-#define CYAN          0x3
-#define RED           0x4
-#define PURPLE        0x5
-#define BROWN         0x6
-#define GREY          0x7
-#define DARK_GREY     0x8
-#define LIGHT_BLUE    0x9
-#define LIGHT_GREEN   0xA
-#define LIGHT_CYAN    0xB
-#define LIGHT_RED     0xC
-#define LIGHT_PURPLE  0xD
-#define YELLOW        0xE
-#define WHITE         0xF
-
-#define WIDTH         80
-#define HEIGHT        25
-
-#define BIN           2
-#define OCT           8
-#define DEC           10
-#define HEX           16
-
 int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
 
@@ -65,6 +40,7 @@ void update_cursor_full(uint16_t pos){
 	outb(0x3D4, 0x0E);
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
 
+    enable_cursor(15,15);
     return;
 }
 
@@ -81,7 +57,7 @@ uint16_t get_cursor_position(){
 //Carattere
 
 void putc(char c){
-    char* VGA = (char*)0xB8000;
+    volatile char* VGA = (volatile char*)0xB8000;
     switch(c){
         case '\n':
             x = 0;
@@ -98,7 +74,7 @@ void putc(char c){
 
         case '\r':
             x = 0;
-            y = 0;
+            y = 1;
             break;
         
         default:
@@ -116,8 +92,7 @@ void putc(char c){
     return;
 }
 
-void cls(int foreg, int backg){
-    DEFAULT_COLOR = (backg * 16) + foreg;
+void cls(){
     x = 0;
     y = 0;
     for (size_t j = 0; j < WIDTH; j++){
@@ -175,8 +150,7 @@ void print_signed(int s_num, int base){
     return;
 }
 
-void printf(const char* fmt, int foreg, int backg, ...){
-    DEFAULT_COLOR = (backg * 16) + foreg;
+void printf(const char* fmt, ...){
     va_list args;
     va_start(args, fmt);
 
@@ -238,23 +212,28 @@ void printf(const char* fmt, int foreg, int backg, ...){
 //Main screen
 
 void DarkScreenInit(){
-    cls(BLUE,LIGHT_BLUE);
-    DEFAULT_COLOR = 0x1F;
-    printf("                                     NaitOS                                     ",LIGHT_BLUE,BLUE);
+    DEFAULT_COLOR = 0x91;
+    cls();
+    DEFAULT_COLOR = 0x19;
+    printf("                                     NaitOS                                     ");
     x = 0, y = 24;
-    printf("                                 Main OS Screen                                 ",LIGHT_BLUE,BLUE);
+    printf("                                 Main OS Screen                                 ");
     x = 0, y = 1;
+    DEFAULT_COLOR = 0x91;
     update_cursor(x,y);
 
     return;
 }
 
 void LightScreenInit(){
-    cls(LIGHT_GREEN,YELLOW);
-    printf("                                     NaitOS                                     ",YELLOW,LIGHT_GREEN);
+    DEFAULT_COLOR = 0xEA;
+    cls();
+    DEFAULT_COLOR = 0xAE;
+    printf("                                     NaitOS                                     ");
     x = 0, y = 24;
-    printf("                                 Main OS Screen                                 ",YELLOW,LIGHT_GREEN);
+    printf("                                 Main OS Screen                                 ");
     x = 0, y = 1;
+    DEFAULT_COLOR = 0xEA;
     update_cursor(x,y);
 
     return;
