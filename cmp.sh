@@ -14,7 +14,8 @@ i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/c/idt.c" -o "build/idt.o" -I hea
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/c/isr.c" -o "build/isr.o" -I header -Wall
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/c/irq.c" -o "build/irq.o" -I header -Wall
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/c/timer.c" -o "build/timer.o" -I header -Wall
+i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/c/keyboard.c" -o "build/keyboard.o" -I header -Wall
 
-i686-elf-ld -o "build/kernel.bin" -Tlinker.ld "build/start_kern.o" "build/in_asm.o" "build/gdt.o" "build/idt.o" "build/isr.o" "build/irq.o" "build/timer.o" "build/stdio.o" "build/kernel.o" --oformat=binary
+i686-elf-ld -o "build/kernel.bin" -Tlinker.ld "build/start_kern.o" "build/in_asm.o" "build/gdt.o" "build/idt.o" "build/isr.o" "build/irq.o" "build/timer.o" "build/keyboard.o" "build/stdio.o" "build/kernel.o" --oformat=binary
 cat "build/boot.bin" "build/kernel.bin" > "OS/NaitOS.img"
 qemu-system-i386 -drive format=raw,file="OS/NaitOS.img"

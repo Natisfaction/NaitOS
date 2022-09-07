@@ -244,7 +244,7 @@ void ErrorScreenInit(){
     cls();
     DEFAULT_COLOR = 0x4C;
     printf("                                     NaitOS                                     ");
-    x = 25, y = 11;
+    x = 21, y = 11;
     DEFAULT_COLOR = 0xC4;
     printf("(X)\t\tError: ");
     DEFAULT_COLOR = 0x4C;

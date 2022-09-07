@@ -7,6 +7,10 @@
 #include "../header/isr.h"
 #include "../header/irq.h"
 #include "../header/timer.h"
+#include "../header/keyboard.h"
+
+int res;
+int num = 9;
 
 extern void main(){
     gdt_install();
@@ -14,9 +18,9 @@ extern void main(){
     isr_install();
     irq_install();
     __asm__ volatile("sti");
+    timer_install();
+    keyboard_install();
     DarkScreenInit();
-    printf("Hello: ");
-    timer_handler(19);
-    printf("World");
+    printf("Hello World");
     return;
 }
