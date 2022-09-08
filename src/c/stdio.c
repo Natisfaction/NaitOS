@@ -8,6 +8,7 @@
 
 int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
+int status;
 
 //Cursore
 
@@ -41,6 +42,43 @@ void update_cursor_full(uint16_t pos){
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
 
     enable_cursor(15,15);
+
+    return;
+}
+
+void Up(){
+    if (y != 1){
+        y--;
+    }
+    update_cursor(x,y);
+
+    return;
+}
+
+void Down(){
+    if (y != 23){
+        y++;
+    }
+    update_cursor(x,y);
+
+    return;
+}
+
+void Dx(){
+    if (!(x == 79 && y == 23)){
+        x++;
+    }
+    update_cursor(x,y);
+
+    return;
+}
+
+void Sx(){
+    if (!(x == 0 && y == 1)){
+        x--;
+    }
+    update_cursor(x,y);
+
     return;
 }
 
@@ -56,19 +94,31 @@ uint16_t get_cursor_position(){
 
 //Carattere
 
+char getc(int x, int y){
+    volatile char* VGA = (volatile char*)0xB8000;
+    
+    return VGA[2* (y * WIDTH + x)];
+}
+
+int getcol(int x, int y){
+    volatile char* VGA = (volatile char*)0xB8000;
+    
+    return VGA[2* (y * WIDTH + x) + 1];
+}
+
 void putc(char c){
     volatile char* VGA = (volatile char*)0xB8000;
     switch(c){
         case '\n':
             x = 0;
-            y++;
+            Down();
             break;
         
         case '\t':
             for (size_t i = 0; i < 3; i++){
                 VGA[2* (y * WIDTH + x)] = ' ';
                 VGA[2* (y * WIDTH + x) + 1] = DEFAULT_COLOR;
-                x++;
+                Dx();
             }
             break;
 
@@ -77,15 +127,23 @@ void putc(char c){
             y = 1;
             break;
         
+        case '\b':
+            if (!(status == 0 && x == 9)){
+                Sx();
+                VGA[2* (y * WIDTH + x)] = '\0';
+                VGA[2* (y * WIDTH + x) + 1] = DEFAULT_COLOR;
+            }
+            break;
+
         default:
             VGA[2* (y * WIDTH + x)] = c;
             VGA[2* (y * WIDTH + x) + 1] = DEFAULT_COLOR;
-            x++;
+            Dx();
             break;
         }
     if (x == WIDTH){
         x = 0;
-        y++;
+        Down();
     }
     update_cursor(x,y);
 
@@ -212,29 +270,31 @@ void printf(const char* fmt, ...){
 //Main screen
 
 void DarkScreenInit(){
+    status = CMDMODE;
     DEFAULT_COLOR = 0x91;
     cls();
     DEFAULT_COLOR = 0x19;
     printf("                                     NaitOS                                     ");
     x = 0, y = 24;
-    printf("                                 Main OS Screen                                 ");
+    printf("                                   CMD - Mode                                   ");
     x = 0, y = 1;
     DEFAULT_COLOR = 0x91;
-    update_cursor(x,y);
+    printf("Ready! > ");
 
     return;
 }
 
 void LightScreenInit(){
+    status = CMDMODE;
     DEFAULT_COLOR = 0xEA;
     cls();
     DEFAULT_COLOR = 0xAE;
     printf("                                     NaitOS                                     ");
     x = 0, y = 24;
-    printf("                                 Main OS Screen                                 ");
+    printf("                                   CMD - Mode                                   ");
     x = 0, y = 1;
     DEFAULT_COLOR = 0xEA;
-    update_cursor(x,y);
+    printf("Ready! > ");
 
     return;
 }
@@ -249,7 +309,7 @@ void ErrorScreenInit(){
     printf("(X)\t\tError: ");
     DEFAULT_COLOR = 0x4C;
     x = 0, y = 24;
-    printf("                    OS Error Screen (maybe this is not good)                    ");
+    printf("                     OS Error Screen (maybe this isn't good)                    ");
     DEFAULT_COLOR = 0xC4;
     x = 41, y = 11;
 

@@ -21,7 +21,5 @@ extern void main(){
     timer_install();
     keyboard_install();
     DarkScreenInit();
-    //res = num / 0;
-    printf("Hello World");
     return;
 }

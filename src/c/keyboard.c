@@ -1,4 +1,5 @@
 #include "../header/keyboard.h"
+#include <stdbool.h>
 
 unsigned char kbdus[128] =
 {
@@ -40,34 +41,36 @@ unsigned char kbdus[128] =
     0,	/* All other keys are undefined */
 };
 
+bool shift_pressed = false;
+bool caps_lock = false;
+
 void keyboard_handler(struct regs *r){
     unsigned char scancode;
 
-    /* Read from the keyboard's data buffer */
     scancode = inb(0x60);
-
+    
     /* If the top bit of the byte we read from the keyboard is
     *  set, that means that a key has just been released */
-    if (scancode & 0x80)
-    {
+    if (scancode & 0x80){
         /* You can use this one to see if the user released the
         *  shift, alt, or control keys... */
-    }
-    else
-    {
-        /* Here, a key was just pressed. Please note that if you
-        *  hold a key down, you will get repeated key press
-        *  interrupts. */
+        switch(scancode){
+    		    case 0xaa: shift_pressed = false;
+            break;
+        }
 
-        /* Just to show you how this works, we simply translate
-        *  the keyboard scancode into an ASCII value, and then
-        *  display it to the screen. You can get creative and
-        *  use some flags to see if a shift is pressed and use a
-        *  different layout, or you can add another 128 entries
-        *  to the above layout to correspond to 'shift' being
-        *  held. If shift is held using the larger lookup table,
-        *  you would add 128 to the scancode when you look for it */
-        putc(kbdus[scancode]);
+	    } else {
+    	
+    	  switch(scancode){
+    	  	case 0x4b: Sx(); break;
+    	  	case 0x4d: Dx(); break;
+    	  	case 0x48: Up(); break;
+    	  	case 0x50: Down(); break;
+    	  	case 0x2a: shift_pressed = true; break;
+    	  	case 0x3a: caps_lock = !caps_lock; break;
+    	  	default: putc(kbdus[scancode]); break;
+    	}
+        
     }
 }
 
