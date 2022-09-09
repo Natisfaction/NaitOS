@@ -59,7 +59,7 @@ void keyboard_handler(struct regs *r){
             break;
         }
 
-	    } else {
+	  } else {
     	
     	  switch(scancode){
     	  	case 0x4b: Sx(); break;
@@ -69,8 +69,7 @@ void keyboard_handler(struct regs *r){
     	  	case 0x2a: shift_pressed = true; break;
     	  	case 0x3a: caps_lock = !caps_lock; break;
     	  	default: putc(kbdus[scancode]); break;
-    	}
-        
+    	  }
     }
 }
 

@@ -10,6 +10,21 @@ int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
 int status;
 
+const char* ready = "Ready! > ";
+const char* NaitOS_v = "NaitOS Version 0.1";
+
+const char cmd[] = {'c','h','v'};
+
+const char* commands[] = {
+"calc\n",
+"help\n",
+"version\n",
+"darkmode\n",
+"lightmode\n",
+};
+
+char usercmd;
+
 //Cursore
 
 void enable_cursor(uint8_t cursor_start, uint8_t cursor_end){
@@ -130,7 +145,7 @@ void putc(char c){
         case '\b':
             if (!(status == 0 && x == 9)){
                 Sx();
-                VGA[2* (y * WIDTH + x)] = '\0';
+                VGA[2* (y * WIDTH + x)] = ' ';
                 VGA[2* (y * WIDTH + x) + 1] = DEFAULT_COLOR;
             }
             break;
@@ -155,7 +170,7 @@ void cls(){
     y = 0;
     for (size_t j = 0; j < WIDTH; j++){
         for (size_t k = 0; k < HEIGHT; k++){
-            putc(' ');
+            putc('\0');
         }
     }
     x = 0;
@@ -279,8 +294,25 @@ void DarkScreenInit(){
     printf("                                   CMD - Mode                                   ");
     x = 0, y = 1;
     DEFAULT_COLOR = 0x91;
-    printf("Ready! > ");
-
+    printf("%s",ready);
+    while (true){
+        usercmd = getc(x,y);
+        if (usercmd == cmd[0]){
+            printf("\nYou are already in cmd mode!\n%s",ready);
+            x++;
+        } else if (usercmd == cmd[1]){
+            printf("\nc: Change your mode to CMD mode\nh: Display Help\nv: Display NaitOS version\n%s",ready);
+            x++;
+        } else if (usercmd == cmd[2]){
+            printf("\n%s\n%s",NaitOS_v,ready);
+            x++;
+        } else if (usercmd == '\0'){
+            continue;
+        } else {
+            printf("\nCommand not recognized! Press 'h' for the help page\n%s",ready);
+            x++;
+        }
+    }
     return;
 }
 
@@ -294,7 +326,7 @@ void LightScreenInit(){
     printf("                                   CMD - Mode                                   ");
     x = 0, y = 1;
     DEFAULT_COLOR = 0xEA;
-    printf("Ready! > ");
+    printf("%s",ready);
 
     return;
 }
