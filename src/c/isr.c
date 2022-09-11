@@ -113,8 +113,8 @@ extern void fault_handler(struct regs *r)
     if (r->int_no < 32)
     {
 		ErrorScreenInit();
-		printf("%s\n\t\t\t\t\t\t\tTry restarting the PC to fix the issue",exception_messages[r->int_no]);
+		printf("%s",exception_messages[r->int_no]);
 		disable_cursor();
-		for(;;);
+		for(;;);		
     }
 }

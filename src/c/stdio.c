@@ -5,6 +5,7 @@
 
 #include "../header/stdio.h"
 #include "../header/in_asm.h"
+#include "../header/string.h"
 
 int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
@@ -12,18 +13,6 @@ int status;
 
 const char* ready = "Ready! > ";
 const char* NaitOS_v = "NaitOS Version 0.1";
-
-const char cmd[] = {'c','h','v'};
-
-const char* commands[] = {
-"calc\n",
-"help\n",
-"version\n",
-"darkmode\n",
-"lightmode\n",
-};
-
-char usercmd;
 
 //Cursore
 
@@ -284,33 +273,55 @@ void printf(const char* fmt, ...){
 
 //Main screen
 
+int character;
+const char *Command[] = {"help","version","calc"};
+char *Usercmd;
+
+int input(){
+    int gotten = getc(x,y);
+    if (gotten != '\0'){
+        printf("\b");
+        return gotten;
+    } else {
+        return 0;
+    }
+}
+
 void DarkScreenInit(){
     status = CMDMODE;
     DEFAULT_COLOR = 0x91;
     cls();
     DEFAULT_COLOR = 0x19;
-    printf("                                     NaitOS                                     ");
+    printf(" \t\t\t\t\t\t\t\t\t\t\t\tNaitOS\t\t\t\t\t\t\t\t\t\t\t\t ");
     x = 0, y = 24;
-    printf("                                   CMD - Mode                                   ");
+    printf("  \t\t\t\t\t\t\t\t\t\t\tCMD - Mode\t\t\t\t\t\t\t\t\t\t\t  ");
     x = 0, y = 1;
     DEFAULT_COLOR = 0x91;
     printf("%s",ready);
     while (true){
-        usercmd = getc(x,y);
-        if (usercmd == cmd[0]){
-            printf("\nYou are already in cmd mode!\n%s",ready);
-            x++;
-        } else if (usercmd == cmd[1]){
-            printf("\nc: Change your mode to CMD mode\nh: Display Help\nv: Display NaitOS version\n%s",ready);
-            x++;
-        } else if (usercmd == cmd[2]){
-            printf("\n%s\n%s",NaitOS_v,ready);
-            x++;
-        } else if (usercmd == '\0'){
-            continue;
+        int i = 0;
+        *Usercmd = "";
+        while (true){
+            character = input();
+            if (character == '\0'){
+                continue;
+            } else if (character == '.'){
+                printf(".\n");
+                break;
+            } else {
+                printf("%c",(char)character);
+                Usercmd[i] = character;
+                i++;
+            }
+        }
+        if (strcmps(*Usercmd,*Command[0]) == 0){
+            printf("\thelp: displays a list of commands\n\tversion: displays the OS version\n\tcalc: opens a calculator\n%s",ready);
+        } else if (strcmps(*Usercmd,*Command[1]) == 0){
+            printf("\tVersion: %s\n%s",NaitOS_v,ready);
+        } else if (strcmps(*Usercmd,*Command[2]) == 0){
+            printf("\tCalculator\n%s",ready);
         } else {
-            printf("\nCommand not recognized! Press 'h' for the help page\n%s",ready);
-            x++;
+            printf("\tCommand not recognized\n%s",ready);
         }
     }
     return;
@@ -321,9 +332,9 @@ void LightScreenInit(){
     DEFAULT_COLOR = 0xEA;
     cls();
     DEFAULT_COLOR = 0xAE;
-    printf("                                     NaitOS                                     ");
+    printf(" \t\t\t\t\t\t\t\t\t\t\t\tNaitOS\t\t\t\t\t\t\t\t\t\t\t\t ");
     x = 0, y = 24;
-    printf("                                   CMD - Mode                                   ");
+    printf("  \t\t\t\t\t\t\t\t\t\t\tCMD - Mode\t\t\t\t\t\t\t\t\t\t\t  ");
     x = 0, y = 1;
     DEFAULT_COLOR = 0xEA;
     printf("%s",ready);
@@ -331,19 +342,23 @@ void LightScreenInit(){
     return;
 }
 
-void ErrorScreenInit(){
+//Schermata di errore, NON DA UTILIZZARE COME FUNZIONE DIRETTA
+
+extern void ErrorScreenInit(){
     DEFAULT_COLOR = 0xC4;
     cls();
     DEFAULT_COLOR = 0x4C;
-    printf("                                     NaitOS                                     ");
-    x = 21, y = 11;
+    printf(" \t\t\t\t\t\t\t\t\t\t\t\tNaitOS\t\t\t\t\t\t\t\t\t\t\t\t ");
+    x = 0, y = 10;
     DEFAULT_COLOR = 0xC4;
-    printf("(X)\t\tError: ");
+    printf("\t\t  / \\\t\t  NaitOS: There was an unexpected error and the OS crashed!!!\n\t\t / | \\\t\t Try to restart the computer to fix this issue\n\t\t/  .  \\");
     DEFAULT_COLOR = 0x4C;
     x = 0, y = 24;
-    printf("                     OS Error Screen (maybe this isn't good)                    ");
+    printf("\t\t\t\t\t\t\tOS Error Screen (maybe this isn't good)  \t\t\t\t\t\t");
     DEFAULT_COLOR = 0xC4;
-    x = 41, y = 11;
+    x = 25, y = 13;
+    DEFAULT_COLOR = 0x4C;
+    printf("ERROR CODE: ");
 
     return;
 }

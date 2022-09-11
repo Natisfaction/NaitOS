@@ -1,5 +1,6 @@
 #include "../header/keyboard.h"
 #include <stdbool.h>
+#include "../header/stdio.h"
 
 unsigned char kbdus[128] =
 {

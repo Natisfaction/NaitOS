@@ -13,7 +13,7 @@ mov bp, 0x8000
 mov sp, bp
 
 mov bx, KERNEL_LOCATION
-mov dh, 20
+mov dh, 40              ;Aumenta il numero progressivamente quando aggiungi file
 
 mov ah, 0x02
 mov al, dh 

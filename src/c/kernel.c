@@ -9,9 +9,6 @@
 #include "../header/timer.h"
 #include "../header/keyboard.h"
 
-int res;
-int num = 9;
-
 extern void main(){
     gdt_install();
     idt_install();

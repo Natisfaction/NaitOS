@@ -54,7 +54,8 @@ void print_unsigned(int u_num, int base);
 
 void print_signed(int s_num, int base);
 void printf(const char* fmt, ...);
-void DarkScreenInit();
+int input();
 
+void DarkScreenInit();
 void LightScreenInit();
-void ErrorScreenInit();
+extern void ErrorScreenInit();
