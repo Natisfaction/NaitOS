@@ -1,5 +1,5 @@
 #include "../header/stdio.h"
-#include "../header/idt.h"
+#include "../Drivers/idt.h"
 #include <stddef.h>
 
 extern void isr0();

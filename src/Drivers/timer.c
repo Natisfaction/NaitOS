@@ -1,5 +1,5 @@
-#include "../header/idt.h"
-#include "../header/irq.h"
+#include "../Drivers/idt.h"
+#include "../Drivers/irq.h"
 
 int timer_ticks = 0;
 int seconds = 0;

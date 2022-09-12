@@ -1,5 +1,5 @@
-#include "../header/idt.h"
-#include "../header/irq.h"
+#include "../Drivers/idt.h"
+#include "../Drivers/irq.h"
 #include "../header/in_asm.h"
 #include "../header/stdio.h"
 

@@ -1,10 +1,12 @@
 ;Sir loader by Nait
-;Booting NaisOS
+;Booting NaitOS
 
 [org 0x7c00]                        ;Indirizzo iniziale
 KERNEL_LOCATION equ 0x1000          ;Kernel
 
-mov [BOOT_DISK], dl
+mov [BOOT_DISK], dl                 ;Salvo l'indirizzo del disco iniziale
+
+;Azzero i registri, e creo uno stack
 
 xor ax, ax
 mov es, ax
@@ -14,6 +16,8 @@ mov sp, bp
 
 mov bx, KERNEL_LOCATION
 mov dh, 40              ;Aumenta il numero progressivamente quando aggiungi file
+
+;Inizializzazione del disco
 
 mov ah, 0x02
 mov al, dh 
@@ -83,7 +87,7 @@ start_protected_mode:
 	mov ebp, 0x90000		;Stack a 32 bit
 	mov esp, ebp
 
-    jmp KERNEL_LOCATION
+    jmp KERNEL_LOCATION     ;Salta alla entry del kernel
 
 times 510-($-$$) db 0              
 dw 0xaa55

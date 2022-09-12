@@ -1,5 +1,5 @@
 #include "../header/in_asm.h"
-#include "../header/idt.h"
+#include "../Drivers/idt.h"
 
 extern void irq0();
 extern void irq1();

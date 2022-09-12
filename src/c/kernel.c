@@ -2,12 +2,12 @@
 #include <stddef.h>
 
 #include "../header/stdio.h"
-#include "../header/gdt.h"
-#include "../header/idt.h"
-#include "../header/isr.h"
-#include "../header/irq.h"
-#include "../header/timer.h"
-#include "../header/keyboard.h"
+#include "../Drivers/gdt.h"
+#include "../Drivers/idt.h"
+#include "../Drivers/isr.h"
+#include "../Drivers/irq.h"
+#include "../Drivers/timer.h"
+#include "../Drivers/keyboard.h"
 
 extern void main(){
     gdt_install();
@@ -18,6 +18,6 @@ extern void main(){
     timer_install();
     keyboard_install();
     DarkScreenInit();
-
+    printf("Hello World!");
     return;
 }
