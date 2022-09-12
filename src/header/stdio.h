@@ -56,6 +56,9 @@ void print_signed(int s_num, int base);
 void printf(const char* fmt, ...);
 int input();
 
+void scrollup(int lastpos);
+void calcolatrice();
+
 void DarkScreenInit();
 void LightScreenInit();
 extern void ErrorScreenInit();

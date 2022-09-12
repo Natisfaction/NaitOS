@@ -5,7 +5,7 @@ echo "======================== ASM COMPILING ======================="
 nasm -f bin "src/asm/boot.asm" -o "build/boot.bin"
 nasm -f bin "src/asm/fine.asm" -o "build/fine.bin"
 nasm -f elf "src/asm/start_kern.asm" -o "build/start_kern.o"
-echo "======================== C COMPILING ========================="
+echo "========================= C COMPILING ========================"
 #Tutti i file di manipolazione I/O
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/c/kernel.c" -o "build/kernel.o" -I header -Wall
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/c/stdio.c" -o "build/stdio.o" -I header -Wall

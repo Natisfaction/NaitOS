@@ -10,6 +10,7 @@
 int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
 int status;
+int firstinit = 0;          //Variabile per lo scrollback
 
 const char* ready = "Ready! > ";
 const char* NaitOS_v = "NaitOS Version 0.1";
@@ -50,38 +51,40 @@ void update_cursor_full(uint16_t pos){
     return;
 }
 
+//Commentate per bugs
+
 void Up(){
-    if (y != 1){
-        y--;
-    }
-    update_cursor(x,y);
+    //if (y != 1){
+    //    y--;
+    //}
+    //update_cursor(x,y);
 
     return;
 }
 
 void Down(){
-    if (y != 23){
-        y++;
-    }
-    update_cursor(x,y);
+    //if (y != 23){
+    //    y++;
+    //}
+    //update_cursor(x,y);
 
     return;
 }
 
 void Dx(){
-    if (!(x == 79 && y == 23)){
-        x++;
-    }
-    update_cursor(x,y);
+    //if (!(x == 79 && y == 23)){
+    //    x++;
+    //}
+    //update_cursor(x,y);
 
     return;
 }
 
 void Sx(){
-    if (!(x == 0 && y == 1)){
-        x--;
-    }
-    update_cursor(x,y);
+    //if (!(x == 0 && y == 1)){
+    //    x--;
+    //}
+    //update_cursor(x,y);
 
     return;
 }
@@ -115,14 +118,14 @@ void putc(char c){
     switch(c){
         case '\n':
             x = 0;
-            Down();
+            y++;
             break;
         
         case '\t':
             for (size_t i = 0; i < 3; i++){
                 VGA[2* (y * WIDTH + x)] = ' ';
                 VGA[2* (y * WIDTH + x) + 1] = DEFAULT_COLOR;
-                Dx();
+                x++;;
             }
             break;
 
@@ -133,7 +136,7 @@ void putc(char c){
         
         case '\b':
             if (!(status == 0 && x == 9)){
-                Sx();
+                x--;
                 VGA[2* (y * WIDTH + x)] = ' ';
                 VGA[2* (y * WIDTH + x) + 1] = DEFAULT_COLOR;
             }
@@ -142,12 +145,13 @@ void putc(char c){
         default:
             VGA[2* (y * WIDTH + x)] = c;
             VGA[2* (y * WIDTH + x) + 1] = DEFAULT_COLOR;
-            Dx();
+            x++;
             break;
         }
+    
     if (x == WIDTH){
         x = 0;
-        Down();
+        y++;
     }
     update_cursor(x,y);
 
@@ -156,8 +160,8 @@ void putc(char c){
 
 void cls(){
     x = 0;
-    y = 0;
-    for (size_t j = 0; j < WIDTH; j++){
+    y = 1;
+    for (size_t j = 0; j < WIDTH-1; j++){
         for (size_t k = 0; k < HEIGHT; k++){
             putc('\0');
         }
@@ -271,20 +275,97 @@ void printf(const char* fmt, ...){
     return;
 }
 
+//Scroll Up (per non esaurire la schermata)
+
+void scrollup(int lastpos){
+    lastpos-=80;
+    x = 0, y = 0;
+    for (size_t a = 0; a < 22; a++){
+        x = 0, y+=2;
+
+        char current[WIDTH];
+
+        for(size_t h = 0; h < WIDTH; h++){
+            current[h] = getc(x,y);
+            x++;
+        }
+
+        x = 0;
+
+        for(size_t h = 0; h < WIDTH; h++){
+            printf("%c",'\0');
+        }
+
+        x = 0, y-=2;
+
+        for(size_t h = 0; h < WIDTH; h++){
+            printf("%c",current[h]);
+        }
+        y--;
+    }
+    update_cursor_full(lastpos);
+
+    return;
+}
+
+//Calcolatrice
+
+void calcolatrice(){
+    char num1ch, num2ch, segno;
+    printf("\tInserisci il primo numero: ");
+    num1ch = input();
+    printf("%c",num1ch);
+    printf("\n\tInserisci il secondo numero: ");
+    num2ch = input();
+    printf("%c",num2ch);
+    printf("\n\tInserisci il segno: ");
+    segno = (char)input();
+    printf("%c",segno);
+    int num1 = num1ch - '0';
+    int num2 = num2ch - '0';
+    int risultato;
+    switch (segno){
+        case '+':
+            risultato = num1 + num2;
+            printf("\n\tIl risultato di %c %c %c e' %d\n%s",num1ch,segno,num2ch,risultato,ready);
+            break;
+        case '-':
+            risultato = num1 - num2;
+            printf("\n\tIl risultato di %c %c %c e' %d\n%s",num1ch,segno,num2ch,risultato,ready);
+            break;
+        case '*':
+            risultato = num1 * num2;
+            printf("\n\tIl risultato di %c %c %c e' %d\n%s",num1ch,segno,num2ch,risultato,ready);
+            break;
+        case '/':
+            risultato = num1 / num2;
+            printf("\n\tIl risultato di %c %c %c e' %d\n%s",num1ch,segno,num2ch,risultato,ready);
+            break;
+        case '%':
+            risultato = num1 % num2;
+            printf("\n\tIl risultato di %c %c %c e' %d\n%s",num1ch,segno,num2ch,risultato,ready);
+            break;
+        default:
+            printf("\n\tErrore: non hai inserito un operatore valido!\n%s",ready);
+            break;
+    }
+
+    return;
+}
+
 //Main screen
 
 int character;
-const char *Command[] = {"help","version","calc"};
+const char *Command[] = {"help","version","calc",""};
 char *Usercmd;
 
 int input(){
-    int gotten = getc(x,y);
-    if (gotten != '\0'){
-        printf("\b");
-        return gotten;
-    } else {
-        return 0;
-    }
+    int gotten;
+    do{
+        gotten = getc(x,y);
+    } while (gotten == '\0');
+    printf("\b");
+    return gotten;
 }
 
 void DarkScreenInit(){
@@ -296,6 +377,7 @@ void DarkScreenInit(){
     x = 0, y = 24;
     printf("  \t\t\t\t\t\t\t\t\t\t\tCMD - Mode\t\t\t\t\t\t\t\t\t\t\t  ");
     x = 0, y = 1;
+    firstinit = 1;
     DEFAULT_COLOR = 0x91;
     printf("%s",ready);
     while (true){
@@ -303,9 +385,7 @@ void DarkScreenInit(){
         *Usercmd = "";
         while (true){
             character = input();
-            if (character == '\0'){
-                continue;
-            } else if (character == '.'){
+            if (character == '.'){
                 printf(".\n");
                 break;
             } else {
@@ -319,11 +399,15 @@ void DarkScreenInit(){
         } else if (strcmps(*Usercmd,*Command[1]) == 0){
             printf("\tVersion: %s\n%s",NaitOS_v,ready);
         } else if (strcmps(*Usercmd,*Command[2]) == 0){
-            printf("\tCalculator\n%s",ready);
+            calcolatrice();
+        } else if (strcmps(*Usercmd,*Command[3]) == 0){
+            printf("\n");
         } else {
             printf("\tCommand not recognized\n%s",ready);
         }
+        //scrollup(get_cursor_position());
     }
+    
     return;
 }
 
