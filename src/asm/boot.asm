@@ -15,7 +15,7 @@ mov bp, 0x8000
 mov sp, bp
 
 mov bx, KERNEL_LOCATION
-mov dh, 40              ;Aumenta il numero progressivamente quando aggiungi file
+mov dh, 60              ;Aumenta il numero progressivamente quando aggiungi file
 
 ;Inizializzazione del disco
 

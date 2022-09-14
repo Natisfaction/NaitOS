@@ -11,6 +11,8 @@ int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
 int status;
 int firstinit = 0;          //Variabile per lo scrollback
+int otx;
+int oty;
 
 const char* ready = "Ready! > ";
 const char* NaitOS_v = "NaitOS Version 0.1";
@@ -153,15 +155,22 @@ void putc(char c){
         x = 0;
         y++;
     }
+
     update_cursor(x,y);
+
+    if (y > 20 && firstinit == 1){
+        do{
+            scrollup(x,y);
+        } while (y > 19);        
+    }
 
     return;
 }
 
 void cls(){
     x = 0;
-    y = 1;
-    for (size_t j = 0; j < WIDTH-1; j++){
+    y = 0;
+    for (size_t j = 0; j < WIDTH; j++){
         for (size_t k = 0; k < HEIGHT; k++){
             putc('\0');
         }
@@ -170,6 +179,18 @@ void cls(){
     y = 0;
     update_cursor(x,y);
     
+    return;
+}
+
+void clline(int yline){
+    int tempy = y, tempx = x;
+    y = yline;
+    x = 0;
+    for (size_t h = 0; h < WIDTH; h++){
+        printf("%c",' ');
+    }
+    
+    x = tempx, y = tempy;
     return;
 }
 
@@ -277,33 +298,33 @@ void printf(const char* fmt, ...){
 
 //Scroll Up (per non esaurire la schermata)
 
-void scrollup(int lastpos){
-    lastpos-=80;
-    x = 0, y = 0;
-    for (size_t a = 0; a < 22; a++){
-        x = 0, y+=2;
+void scrollup(int xpos, int ypos){
 
-        char current[WIDTH];
+    x = 0, y = ypos;
 
-        for(size_t h = 0; h < WIDTH; h++){
-            current[h] = getc(x,y);
-            x++;
-        }
+    int currenty = y;
 
-        x = 0;
+    char buffer[WIDTH];
 
-        for(size_t h = 0; h < WIDTH; h++){
-            printf("%c",'\0');
-        }
-
-        x = 0, y-=2;
-
-        for(size_t h = 0; h < WIDTH; h++){
-            printf("%c",current[h]);
-        }
-        y--;
+    for (size_t l = 0; l < WIDTH; l++){
+        buffer[l] = getc(x,y);
+        x++;
     }
-    update_cursor_full(lastpos);
+
+    y = currenty;
+    x = 0;
+
+    clline(currenty);
+
+    currenty--;
+
+    x = 0, y = currenty;
+
+    printf("%s",buffer);
+
+    x = xpos;
+    ypos--;
+    y = ypos;
 
     return;
 }
@@ -369,7 +390,6 @@ int input(){
 }
 
 void DarkScreenInit(){
-    status = CMDMODE;
     DEFAULT_COLOR = 0x91;
     cls();
     DEFAULT_COLOR = 0x19;
@@ -379,40 +399,40 @@ void DarkScreenInit(){
     x = 0, y = 1;
     firstinit = 1;
     DEFAULT_COLOR = 0x91;
-    printf("%s",ready);
-    while (true){
-        int i = 0;
-        *Usercmd = "";
-        while (true){
-            character = input();
-            if (character == '.'){
-                printf(".\n");
-                break;
-            } else {
-                printf("%c",(char)character);
-                Usercmd[i] = character;
-                i++;
-            }
-        }
-        if (strcmps(*Usercmd,*Command[0]) == 0){
-            printf("\thelp: displays a list of commands\n\tversion: displays the OS version\n\tcalc: opens a calculator\n%s",ready);
-        } else if (strcmps(*Usercmd,*Command[1]) == 0){
-            printf("\tVersion: %s\n%s",NaitOS_v,ready);
-        } else if (strcmps(*Usercmd,*Command[2]) == 0){
-            calcolatrice();
-        } else if (strcmps(*Usercmd,*Command[3]) == 0){
-            printf("\n");
-        } else {
-            printf("\tCommand not recognized\n%s",ready);
-        }
-        //scrollup(get_cursor_position());
-    }
-    
+    //printf("%s",ready);
+    //while (true){
+    //    int i = 0;
+    //    *Usercmd = "";
+    //    while (true){
+    //        character = input();
+    //        if (character == '.'){
+    //            printf(".\n");
+    //            break;
+    //        } else {
+    //            printf("%c",(char)character);
+    //            Usercmd[i] = character;
+    //            i++;
+    //        }
+    //    }
+    //    if (strcmps(*Usercmd,*Command[0]) == 0){
+    //        printf("\thelp: displays a list of commands\n\tversion: displays the OS version\n\tcalc: opens a calculator\n%s",ready);
+    //    } else if (strcmps(*Usercmd,*Command[1]) == 0){
+    //        printf("\tVersion: %s\n%s",NaitOS_v,ready);
+    //    } else if (strcmps(*Usercmd,*Command[2]) == 0){
+    //        calcolatrice();
+    //    } else if (strcmps(*Usercmd,*Command[3]) == 0){
+    //        printf("\n");
+    //    } else {
+    //        printf("\tCommand not recognized\n%s",ready);
+    //    }
+    //}
+    printf("Hello WOrld\nABCdefghiJKLMNO\n123456789\nLoL My name is\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul");
+
+
     return;
 }
 
 void LightScreenInit(){
-    status = CMDMODE;
     DEFAULT_COLOR = 0xEA;
     cls();
     DEFAULT_COLOR = 0xAE;

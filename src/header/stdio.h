@@ -27,11 +27,6 @@
 #define DEC           10
 #define HEX           16
 
-#define CMDMODE         0
-#define CALCMODE        1
-#define WRITEMODE       2
-#define ERRORMODE     0xE
-
 void enable_cursor(uint8_t cursor_start, uint8_t cursor_end);
 void disable_cursor();
 void update_cursor(int x, int y);
@@ -49,6 +44,7 @@ int getcol(int x, int y);
 void putc(char c);
 
 void cls();
+void clline(int yline);
 void puts(const char* str);
 void print_unsigned(int u_num, int base);
 
@@ -56,7 +52,7 @@ void print_signed(int s_num, int base);
 void printf(const char* fmt, ...);
 int input();
 
-void scrollup(int lastpos);
+void scrollup(int xpos, int ypos);
 void calcolatrice();
 
 void DarkScreenInit();
