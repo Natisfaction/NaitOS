@@ -1,5 +1,6 @@
 # NaitOS
 Coding an OS just for fun!!!
+
     ==================== Releases ====================
         - Release 0.0 (removed): added basic function
         - Release 0.1   (alpha): added GDT, IDT and service routines
