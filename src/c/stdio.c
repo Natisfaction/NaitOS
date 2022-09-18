@@ -297,7 +297,33 @@ void printf(const char* fmt, ...){
 //Scroll Up (per non esaurire la schermata)
 
 void scrollup(int xpos, int ypos){
-    
+    ypos--;
+
+    x = 0, y = 1;
+
+    char buffer[WIDTH];
+
+    for (size_t n = 0; n < 16; n++){
+        x = 0;
+        y += 1;
+        int currenty = y;
+        for (size_t l = 0; l < WIDTH; l++){
+            buffer[l] = getc(x,y);
+            if (buffer[l] == '\0'){
+                buffer[l] = ' ';
+            }
+            x++;
+        }
+        clline(currenty);
+        x = 0;
+        y--;
+        printf("%s",buffer);
+    }
+
+    x = xpos;
+    y = ypos;
+
+    update_cursor(x,y);
 
     return;
 }
