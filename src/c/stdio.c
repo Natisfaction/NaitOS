@@ -159,9 +159,7 @@ void putc(char c){
     update_cursor(x,y);
 
     if (y > 20 && firstinit == 1){
-        do{
-            scrollup(x,y);
-        } while (y > 19);        
+        scrollup(x,y);      
     }
 
     return;
@@ -300,31 +298,28 @@ void printf(const char* fmt, ...){
 
 void scrollup(int xpos, int ypos){
 
-    x = 0, y = ypos;
+    x = 0, y = 0;
 
     int currenty = y;
 
     char buffer[WIDTH];
 
-    for (size_t l = 0; l < WIDTH; l++){
-        buffer[l] = getc(x,y);
-        x++;
+    for (size_t n = 0; n < 11; n++){
+        x = 0;
+        y += 2;
+        for (size_t l = 0; l < WIDTH; l++){
+            buffer[l] = getc(x,y);
+            x++;
+        }
+        x = 0;
+        y--;
+        printf("%s",buffer);
     }
 
-    y = currenty;
-    x = 0;
-
-    clline(currenty);
-
-    currenty--;
-
-    x = 0, y = currenty;
-
-    printf("%s",buffer);
-
     x = xpos;
-    ypos--;
     y = ypos;
+
+    update_cursor(x,y);
 
     return;
 }
@@ -426,9 +421,10 @@ void DarkScreenInit(){
     //        printf("\tCommand not recognized\n%s",ready);
     //    }
     //}
-    printf("Hello WOrld\nABCdefghiJKLMNO\n123456789\nLoL My name is\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul");
-
-
+    printf("Hello WOrld\nABCdefghiJKLMNO\n123456789\nLoL My name is\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul");
+    int xget = get_cursor_position() % WIDTH;
+    int yget = get_cursor_position() / WIDTH;
+    scrollup(xget,yget);
     return;
 }
 
