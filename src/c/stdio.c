@@ -297,29 +297,7 @@ void printf(const char* fmt, ...){
 //Scroll Up (per non esaurire la schermata)
 
 void scrollup(int xpos, int ypos){
-
-    x = 0, y = 0;
-
-    int currenty = y;
-
-    char buffer[WIDTH];
-
-    for (size_t n = 0; n < 11; n++){
-        x = 0;
-        y += 2;
-        for (size_t l = 0; l < WIDTH; l++){
-            buffer[l] = getc(x,y);
-            x++;
-        }
-        x = 0;
-        y--;
-        printf("%s",buffer);
-    }
-
-    x = xpos;
-    y = ypos;
-
-    update_cursor(x,y);
+    
 
     return;
 }
@@ -384,6 +362,8 @@ int input(){
     return gotten;
 }
 
+//Schermata scura
+
 void DarkScreenInit(){
     DEFAULT_COLOR = 0x91;
     cls();
@@ -421,20 +401,21 @@ void DarkScreenInit(){
     //        printf("\tCommand not recognized\n%s",ready);
     //    }
     //}
-    printf("Hello WOrld\nABCdefghiJKLMNO\n123456789\nLoL My name is\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul\nLuuuul");
-    int xget = get_cursor_position() % WIDTH;
-    int yget = get_cursor_position() / WIDTH;
-    scrollup(xget,yget);
+    printf("1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1");
+    scrollup(x,y);
+
     return;
 }
+
+//Schermata chiara
 
 void LightScreenInit(){
     DEFAULT_COLOR = 0xEA;
     cls();
     DEFAULT_COLOR = 0xAE;
-    printf(" \t\t\t\t\t\t\t\t\t\t\t\tNaitOS\t\t\t\t\t\t\t\t\t\t\t\t ");
+    printf("\t\t\t\t\t\t\t\t\t\t\t\t NaitOS \t\t\t\t\t\t\t\t\t\t\t\t");
     x = 0, y = 24;
-    printf("  \t\t\t\t\t\t\t\t\t\t\tCMD - Mode\t\t\t\t\t\t\t\t\t\t\t  ");
+    printf("\t\t\t\t\t\t\t\t\t\t\t  CMD - Mode  \t\t\t\t\t\t\t\t\t\t\t");
     x = 0, y = 1;
     DEFAULT_COLOR = 0xEA;
     printf("%s",ready);

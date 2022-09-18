@@ -1,4 +1,4 @@
-export PREFIX="/mnt/c/Users/cl406/Desktop/Coding/NaitOS/Nait/Toolchain/i686-elf"
+export PREFIX="/mnt/c/Users/cl406.LAPTOP-IK41ND23/Desktop/Coding/NaitOS/Nait/Toolchain/i686-elf"
 export TARGET=i686-elf
 export PATH="$PREFIX/bin:$PATH"
 echo "======================== ASM COMPILING ======================="
@@ -10,11 +10,13 @@ echo "========================= C COMPILING ========================"
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/c/kernel.c" -o "build/kernel.o" -I header -Wall
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/c/stdio.c" -o "build/stdio.o" -I header -Wall
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/c/in_asm.c" -o "build/in_asm.o" -I header -Wall
+
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/c/string.c" -o "build/string.o" -I header -Wall
 #Tutti i file di driver etc
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/Drivers/gdt.c" -o "build/gdt.o" -I Drivers -Wall
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/Drivers/idt.c" -o "build/idt.o" -I Drivers -Wall
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/Drivers/isr.c" -o "build/isr.o" -I Drivers -Wall
+
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/Drivers/irq.c" -o "build/irq.o" -I Drivers -Wall
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/Drivers/timer.c" -o "build/timer.o" -I Drivers -Wall
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/Drivers/keyboard.c" -o "build/keyboard.o" -I Drivers -Wall
