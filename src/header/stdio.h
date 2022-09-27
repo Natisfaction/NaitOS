@@ -27,34 +27,38 @@
 #define DEC           10
 #define HEX           16
 
+//Cursore
+
 void enable_cursor(uint8_t cursor_start, uint8_t cursor_end);
 void disable_cursor();
 void update_cursor(int x, int y);
 
 void update_cursor_full(uint16_t pos);
+uint16_t get_cursor_position();
+
+//Inutilizzate 
+
 void Up();
 void Down();
-
 void Dx();
+
 void Sx();
-uint16_t get_cursor_position();
+
+//Carattere & video
 
 char getc(int x, int y);
 int getcol(int x, int y);
 void putc(char c);
 
+void scroll();
 void cls();
-void clline(int yline);
 void puts(const char* str);
-void print_unsigned(int u_num, int base);
 
+void print_unsigned(int u_num, int base);
 void print_signed(int s_num, int base);
 void printf(const char* fmt, ...);
-int input();
 
-void scrollup(int xpos, int ypos);
-void calcolatrice();
+//Schermo & errore
 
-void DarkScreenInit();
-void LightScreenInit();
+void OSScreenInit();
 extern void ErrorScreenInit();

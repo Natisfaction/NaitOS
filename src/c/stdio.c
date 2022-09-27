@@ -5,17 +5,14 @@
 
 #include "../header/stdio.h"
 #include "../header/in_asm.h"
-#include "../header/string.h"
+//#include "../header/string.h"
 
 int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
-int status;
-int firstinit = 0;          //Variabile per lo scrollback
-int otx;
-int oty;
+int adj = 0;          //Variabile di sicurezza (0 se non sta sistemando, 1 se sta sistemando)
 
 const char* ready = "Ready! > ";
-const char* NaitOS_v = "NaitOS Version 0.1";
+const char* NaitOS_v = "NaitOS Version 0.5";
 
 //Cursore
 
@@ -106,7 +103,7 @@ uint16_t get_cursor_position(){
 char getc(int x, int y){
     volatile char* VGA = (volatile char*)0xB8000;
     
-    return VGA[2* (y * WIDTH + x)];
+    return (int)VGA[2* (y * WIDTH + x)];
 }
 
 int getcol(int x, int y){
@@ -117,31 +114,27 @@ int getcol(int x, int y){
 
 void putc(char c){
     volatile char* VGA = (volatile char*)0xB8000;
+
     switch(c){
         case '\n':
-            x = 0;
             y++;
             break;
         
         case '\t':
             for (size_t i = 0; i < 3; i++){
-                VGA[2* (y * WIDTH + x)] = ' ';
-                VGA[2* (y * WIDTH + x) + 1] = DEFAULT_COLOR;
-                x++;;
+                putc(' ');
             }
             break;
 
         case '\r':
             x = 0;
-            y = 1;
+            y++;
             break;
         
         case '\b':
-            if (!(status == 0 && x == 9)){
-                x--;
-                VGA[2* (y * WIDTH + x)] = ' ';
-                VGA[2* (y * WIDTH + x) + 1] = DEFAULT_COLOR;
-            }
+            x--;
+            putc('\0');
+            x--;
             break;
 
         default:
@@ -158,37 +151,89 @@ void putc(char c){
 
     update_cursor(x,y);
 
-    if (y > 20 && firstinit == 1){
-        scrollup(x,y);      
+    scroll();
+
+    return;
+}
+
+void scroll(){
+
+    //Salvataggio variabili
+
+    int checky = get_cursor_position() / WIDTH;
+    int checkx = get_cursor_position() % WIDTH;
+
+    //Esegue lo scroll solo se la y non è minore di 25
+
+    if((checky >= HEIGHT-1) && adj == 0){
+
+        adj = 1;
+
+        char buffer[WIDTH];
+
+        y = 0, x = 0;
+
+        for (size_t a = 0; a < WIDTH; a++){
+            putc('\0');
+        }
+        
+
+        for (size_t b = 1; b != HEIGHT; b++){
+
+            //Prendi i caratteri
+
+            y = b, x = 0;
+
+            for (size_t c = 0; c < WIDTH; c++){
+                buffer[c] = getc(x,y);
+                x++;
+            }
+
+            //Pulisci la linea
+
+            y = b, x = 0;
+
+            for (size_t c = 0; c < WIDTH; c++){
+                putc('\0');
+            }
+
+            //Scrivi alla y precedente il buffer
+
+            y = b-1, x = 0;
+
+            printf("%s",buffer);
+        }
+
+        x = checkx, y = checky-1;
+
+        update_cursor(x,y);
     }
+
+    adj = 0;
 
     return;
 }
 
 void cls(){
+
+    adj = 1;
+
     x = 0;
     y = 0;
-    for (size_t j = 0; j < WIDTH; j++){
-        for (size_t k = 0; k < HEIGHT; k++){
+
+    for(size_t h = 0; h < HEIGHT; h++){
+        for (size_t j = 0; j < WIDTH; j++){
             putc('\0');
         }
     }
+
     x = 0;
     y = 0;
-    update_cursor(x,y);
-    
-    return;
-}
 
-void clline(int yline){
-    int tempy = y, tempx = x;
-    y = yline;
-    x = 0;
-    for (size_t h = 0; h < WIDTH; h++){
-        printf("%c",' ');
-    }
+    update_cursor(x,y);
+
+    adj = 0;
     
-    x = tempx, y = tempy;
     return;
 }
 
@@ -294,42 +339,8 @@ void printf(const char* fmt, ...){
     return;
 }
 
-//Scroll Up (per non esaurire la schermata)
-
-void scrollup(int xpos, int ypos){
-    ypos--;
-
-    x = 0, y = 1;
-
-    char buffer[WIDTH];
-
-    for (size_t n = 0; n < 16; n++){
-        x = 0;
-        y += 1;
-        int currenty = y;
-        for (size_t l = 0; l < WIDTH; l++){
-            buffer[l] = getc(x,y);
-            if (buffer[l] == '\0'){
-                buffer[l] = ' ';
-            }
-            x++;
-        }
-        clline(currenty);
-        x = 0;
-        y--;
-        printf("%s",buffer);
-    }
-
-    x = xpos;
-    y = ypos;
-
-    update_cursor(x,y);
-
-    return;
-}
-
 //Calcolatrice
-
+/*
 void calcolatrice(){
     char num1ch, num2ch, segno;
     printf("\tInserisci il primo numero: ");
@@ -372,99 +383,43 @@ void calcolatrice(){
 
     return;
 }
-
+*/
 //Main screen
 
 int character;
-const char *Command[] = {"help","version","calc",""};
+const char *Command[] = {"help","version","calc"};
 char *Usercmd;
 
-int input(){
-    int gotten;
-    do{
-        gotten = getc(x,y);
-    } while (gotten == '\0');
-    printf("\b");
-    return gotten;
-}
+//Schermata del sistema operativo
 
-//Schermata scura
-
-void DarkScreenInit(){
-    DEFAULT_COLOR = 0x91;
+void OSScreenInit(){
     cls();
-    DEFAULT_COLOR = 0x19;
-    printf(" \t\t\t\t\t\t\t\t\t\t\t\tNaitOS\t\t\t\t\t\t\t\t\t\t\t\t ");
-    x = 0, y = 24;
-    printf("  \t\t\t\t\t\t\t\t\t\t\tCMD - Mode\t\t\t\t\t\t\t\t\t\t\t  ");
-    x = 0, y = 1;
-    firstinit = 1;
-    DEFAULT_COLOR = 0x91;
-    //printf("%s",ready);
-    //while (true){
-    //    int i = 0;
-    //    *Usercmd = "";
-    //    while (true){
-    //        character = input();
-    //        if (character == '.'){
-    //            printf(".\n");
-    //            break;
-    //        } else {
-    //            printf("%c",(char)character);
-    //            Usercmd[i] = character;
-    //            i++;
-    //        }
-    //    }
-    //    if (strcmps(*Usercmd,*Command[0]) == 0){
-    //        printf("\thelp: displays a list of commands\n\tversion: displays the OS version\n\tcalc: opens a calculator\n%s",ready);
-    //    } else if (strcmps(*Usercmd,*Command[1]) == 0){
-    //        printf("\tVersion: %s\n%s",NaitOS_v,ready);
-    //    } else if (strcmps(*Usercmd,*Command[2]) == 0){
-    //        calcolatrice();
-    //    } else if (strcmps(*Usercmd,*Command[3]) == 0){
-    //        printf("\n");
-    //    } else {
-    //        printf("\tCommand not recognized\n%s",ready);
-    //    }
-    //}
-    printf("1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1");
-    scrollup(x,y);
+    printf("[NaitOS version 0.5]\r%s",ready);
+    printf("\r[NaitOS version 0.5]\r%s",ready);
+    printf("\r[NaitOS version 0.5]\r%s",ready);
+    printf("\r[NaitOS version 0.5]\r%s",ready);
+    printf("\r[NaitOS version 0.5]\r%s",ready);
+    printf("\r[NaitOS version 0.5]\r%s",ready);
+    printf("\r[NaitOS version 0.5]\r%s",ready);
+    printf("\r[NaitOS version 0.5]\r%s",ready);
+    printf("\r[NaitOS version 0.5]\r%s",ready);
+    printf("\r[NaitOS version 0.5]\r%s",ready);
+    printf("\r[NaitOS version 0.5]\r%s",ready);
+    printf("\r[NaitOS version 0.5]\r%s\rCiao, sei stato scrollato vero???",ready);
 
     return;
 }
 
-//Schermata chiara
-
-void LightScreenInit(){
-    DEFAULT_COLOR = 0xEA;
-    cls();
-    DEFAULT_COLOR = 0xAE;
-    printf("\t\t\t\t\t\t\t\t\t\t\t\t NaitOS \t\t\t\t\t\t\t\t\t\t\t\t");
-    x = 0, y = 24;
-    printf("\t\t\t\t\t\t\t\t\t\t\t  CMD - Mode  \t\t\t\t\t\t\t\t\t\t\t");
-    x = 0, y = 1;
-    DEFAULT_COLOR = 0xEA;
-    printf("%s",ready);
-
-    return;
-}
-
-//Schermata di errore, NON DA UTILIZZARE COME FUNZIONE DIRETTA
+//Schermata di errore (viene chiamata dalle routines)
 
 extern void ErrorScreenInit(){
     DEFAULT_COLOR = 0xC4;
     cls();
-    DEFAULT_COLOR = 0x4C;
-    printf(" \t\t\t\t\t\t\t\t\t\t\t\tNaitOS\t\t\t\t\t\t\t\t\t\t\t\t ");
     x = 0, y = 10;
     DEFAULT_COLOR = 0xC4;
-    printf("\t\t  / \\\t\t  NaitOS: There was an unexpected error and the OS crashed!!!\n\t\t / | \\\t\t Try to restart the computer to fix this issue\n\t\t/  .  \\");
+    printf("\t\t  / \\\t\t  NaitOS: There was an unexpected error and the OS crashed!!!\r\t\t / | \\\t\t Try to restart the computer to fix this issue\r\t\t/  .  \\");
     DEFAULT_COLOR = 0x4C;
-    x = 0, y = 24;
-    printf("\t\t\t\t\t\t\tOS Error Screen (maybe this isn't good)  \t\t\t\t\t\t");
-    DEFAULT_COLOR = 0xC4;
     x = 25, y = 13;
-    DEFAULT_COLOR = 0x4C;
     printf("ERROR CODE: ");
 
     return;

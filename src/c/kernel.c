@@ -17,6 +17,7 @@ extern void main(){
     __asm__ volatile("sti");
     timer_install();
     keyboard_install();
-    DarkScreenInit();
+    OSScreenInit();
+
     return;
 }
