@@ -3,9 +3,20 @@ Coding an OS just for fun!!!
 
     ==================== Releases ====================
         - Release 0.0 (removed): added basic function
-        - Release 0.1   (alpha): added GDT, IDT and service routines
-        - Release 0.5    (beta): I'm going to add the scrollback function
-        - Release 1.0 (hopefully full release): I'm going to fix the keyboard
+
+        - Release 0.1 (alpha): added GDT, IDT and
+          service routines
+
+        - Release 0.5 (beta): I'm going to add the
+          scrollback function
+
+        - Release 1.0 (hopefully full release): I'm
+          going to fix the keyboard
+
+        - Release 1.5 (full release): I'm going to
+          refactor the OS and migrate to C++
+
+              More releases coming up soon!!!
 
     ==================== Commands ====================
     Right now the OS has the following commands:
