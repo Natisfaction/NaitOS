@@ -55,44 +55,44 @@ void keyboard_handler(struct regs *r){
       //Controllo se lo shift è stato premuto
 
         switch(scancode){
-    		    case 0xaa:
+    		case 0xaa:
                 shift_pressed = false;
                 break;
         }
 
-	  } else {
+	} else {
     	
-    	  switch(scancode){
-    	  	  case 0x4b:
+    	switch(scancode){
+    	  	case 0x4b:
                 Sx();
                 break;
 
-    	  	  case 0x4d: 
+    	  	case 0x4d: 
                 Dx();
                 break;
 
-    	  	  case 0x48: 
+    	  	case 0x48: 
                 Up();
                 break;
 
-    	  	  case 0x50: 
+    	  	case 0x50: 
                 Down();
                 break;
 
-    	  	  case 0x2a: 
+    	  	case 0x2a: 
                 shift_pressed = true;
                 break;
 
             //Qui il caps va acceso e spento
 
-    	  	  case 0x3a: 
+    	  	case 0x3a: 
                 caps_lock = !caps_lock;
                 break;
 
-    	  	  default:
-                KeyboardProcess(kbdus[scancode]);
+    	  	default:
+                putc(kbdus[scancode]);
                 break;
-    	  }
+    	}
     }
 }
 

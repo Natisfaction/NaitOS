@@ -387,36 +387,28 @@ void calcolatrice(){
 
 //Funzioni per la tastiera (processing del carattere)
 
-void KeyboardProcess(int code){
-    //printf("%c",(char)code);
-    
-    return;
-}
-
-int character;
 const char *Command[] = {"help","version","calc"};
 char *Usercmd;
+char actualchar;
 
 //Schermata del sistema operativo
 
 void OSScreenInit(){
     cls();
     printf("[NaitOS version 0.5]\r%s",ready);
-
+    
     return;
 }
 
 //Schermata di errore (viene chiamata dalle routines)
 
 extern void ErrorScreenInit(){
-    DEFAULT_COLOR = 0xC4;
+    DEFAULT_COLOR = 0x4C;
     cls();
     x = 0, y = 10;
-    DEFAULT_COLOR = 0xC4;
-    printf("\t\t  / \\\t\t  NaitOS: There was an unexpected error and the OS crashed!!!\r\t\t / | \\\t\t Try to restart the computer to fix this issue\r\t\t/  .  \\");
-    DEFAULT_COLOR = 0x4C;
+    printf("\t\t  / \\\t\t  NaitOS: There was an unexpected error and the OS crashed!!!\r\t\t / | \\\t\t\t\t Try to restart the computer to fix this issue\r\t\t/  .  \\");
     x = 25, y = 13;
-    printf("ERROR CODE: ");
+    printf("\t ERROR: ");
 
     return;
 }
