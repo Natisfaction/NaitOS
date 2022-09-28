@@ -1,27 +1,31 @@
 # NaitOS
-Coding an OS just for fun!!!
 
-    ==================== Releases ====================
-        - Release 0.0 (removed): added basic function
+*Developing an OS just for fun purposes!!!*
 
-        - Release 0.1 (alpha)(current): added GDT, IDT and
-          service routines
 
-        - Release 0.5 (beta): I'm going to add the
-          scrollback function
+## What is NaitOS???
 
-        - Release 1.0 (hopefully full release): I'm
-          going to fix the keyboard
+NaitOS is an Operating System, that is currently under development, written by a young man with a lot of dedication.
 
-        - Release 1.5 (full release): I'm going to
-          refactor the OS and migrate to C++
+At first, it was supposed to be a little "experiment", but now became a really good passion, and I'm really proud of myself.
 
-              More releases coming up soon!!!
+## When commands'll be implemented???
 
-    ==================== Commands ====================
-    Right now the OS has the following commands:
-        - help.     ---> Displays a list of commands
-        - calc.     ---> A basic calculator
-        - version.  ---> Displays the OS version
+I'm planning to make a lot of commands, but they'll become a part of the OS during the 1.5 release. 
 
-    IMPORTANT NOTE: the "enter" character is the '.' right now
+# Features
+
+Current features include:
+ - **Bootloader** fully implemented
+ - **IDT**, **GDT**, **ISR**, **IRQ**
+ - **Keyboard** implemented
+ - **Printing to screen** implemented
+ - **Error management** fully implemented
+
+## What next???
+
+A lot of features are coming up, the main ones are the following:
+ - **Memory management**
+ - **File System** (FAT12)
+
+***Stay tuned!!!***
