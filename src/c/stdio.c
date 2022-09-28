@@ -5,11 +5,10 @@
 
 #include "../header/stdio.h"
 #include "../header/in_asm.h"
-//#include "../header/string.h"
 
 int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
-int adj = 0;          //Variabile di sicurezza (0 se non sta sistemando, 1 se sta sistemando)
+bool normalprint = true;          //Variabile di sicurezza (true se sta stampando, false se deve andare a libero schermo)
 
 const char* ready = "Ready! > ";
 const char* NaitOS_v = "NaitOS Version 0.5";
@@ -165,9 +164,9 @@ void scroll(){
 
     //Esegue lo scroll solo se la y non è minore di 25
 
-    if((checky >= HEIGHT-1) && adj == 0){
+    if((checky >= HEIGHT-1) && normalprint){
 
-        adj = 1;
+        normalprint = false;
 
         char buffer[WIDTH];
 
@@ -207,16 +206,16 @@ void scroll(){
         x = checkx, y = checky-1;
 
         update_cursor(x,y);
-    }
 
-    adj = 0;
+        normalprint = true;
+    }
 
     return;
 }
 
 void cls(){
 
-    adj = 1;
+    normalprint = false;
 
     x = 0;
     y = 0;
@@ -232,7 +231,7 @@ void cls(){
 
     update_cursor(x,y);
 
-    adj = 0;
+    normalprint = true;
     
     return;
 }
@@ -386,6 +385,14 @@ void calcolatrice(){
 */
 //Main screen
 
+//Funzioni per la tastiera (processing del carattere)
+
+void KeyboardProcess(int code){
+    //printf("%c",(char)code);
+    
+    return;
+}
+
 int character;
 const char *Command[] = {"help","version","calc"};
 char *Usercmd;
@@ -395,17 +402,6 @@ char *Usercmd;
 void OSScreenInit(){
     cls();
     printf("[NaitOS version 0.5]\r%s",ready);
-    printf("\r[NaitOS version 0.5]\r%s",ready);
-    printf("\r[NaitOS version 0.5]\r%s",ready);
-    printf("\r[NaitOS version 0.5]\r%s",ready);
-    printf("\r[NaitOS version 0.5]\r%s",ready);
-    printf("\r[NaitOS version 0.5]\r%s",ready);
-    printf("\r[NaitOS version 0.5]\r%s",ready);
-    printf("\r[NaitOS version 0.5]\r%s",ready);
-    printf("\r[NaitOS version 0.5]\r%s",ready);
-    printf("\r[NaitOS version 0.5]\r%s",ready);
-    printf("\r[NaitOS version 0.5]\r%s",ready);
-    printf("\r[NaitOS version 0.5]\r%s\rCiao, sei stato scrollato vero???",ready);
 
     return;
 }

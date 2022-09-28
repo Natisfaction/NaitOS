@@ -58,6 +58,10 @@ void print_unsigned(int u_num, int base);
 void print_signed(int s_num, int base);
 void printf(const char* fmt, ...);
 
+//Tastiera
+
+void KeyboardProcess(int code);
+
 //Schermo & errore
 
 void OSScreenInit();

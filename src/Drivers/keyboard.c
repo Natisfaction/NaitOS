@@ -5,18 +5,18 @@
 unsigned char kbdus[128] =
 {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */
-  '9', '0', '-', '=', '\b',	/* Backspace */
-  '\t',			/* Tab */
-  'q', 'w', 'e', 'r',	/* 19 */
-  't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\r',	/* Enter key */
+    '9', '0', '-', '=', '\b',	/* Backspace */
+    '\t',			/* Tab */
+    'q', 'w', 'e', 'r',	/* 19 */
+    't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\r',	/* Enter key */
     0,			/* 29   - Control */
-  'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',	/* 39 */
- '\'', '`',   0,		/* Left shift */
- '\\', 'z', 'x', 'c', 'v', 'b', 'n',			/* 49 */
-  'm', ',', '.', '/',   0,				/* Right shift */
-  '*',
+    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',	/* 39 */
+    '\'', '`',   0,		/* Left shift */
+    '\\', 'z', 'x', 'c', 'v', 'b', 'n',			/* 49 */
+    'm', ',', '.', '/',   0,				/* Right shift */
+    '*',
     0,	/* Alt */
-  ' ',	/* Space bar */
+    ' ',/* Space bar */
     0,	/* Caps lock */
     0,	/* 59 - F1 key ... > */
     0,   0,   0,   0,   0,   0,   0,   0,
@@ -26,11 +26,11 @@ unsigned char kbdus[128] =
     0,	/* Home key */
     0,	/* Up Arrow */
     0,	/* Page Up */
-  '-',
+    '-',
     0,	/* Left Arrow */
     0,
     0,	/* Right Arrow */
-  '+',
+    '+',
     0,	/* 79 - End key*/
     0,	/* Down Arrow */
     0,	/* Page Down */
@@ -50,26 +50,48 @@ void keyboard_handler(struct regs *r){
 
     scancode = inb(0x60);
     
-    /* If the top bit of the byte we read from the keyboard is
-    *  set, that means that a key has just been released */
     if (scancode & 0x80){
-        /* You can use this one to see if the user released the
-        *  shift, alt, or control keys... */
+
+      //Controllo se lo shift è stato premuto
+
         switch(scancode){
-    		    case 0xaa: shift_pressed = false;
-            break;
+    		    case 0xaa:
+                shift_pressed = false;
+                break;
         }
 
 	  } else {
     	
     	  switch(scancode){
-    	  	case 0x4b: Sx(); break;
-    	  	case 0x4d: Dx(); break;
-    	  	case 0x48: Up(); break;
-    	  	case 0x50: Down(); break;
-    	  	case 0x2a: shift_pressed = true; break;
-    	  	case 0x3a: caps_lock = !caps_lock; break;
-    	  	default: putc(kbdus[scancode]); break;
+    	  	  case 0x4b:
+                Sx();
+                break;
+
+    	  	  case 0x4d: 
+                Dx();
+                break;
+
+    	  	  case 0x48: 
+                Up();
+                break;
+
+    	  	  case 0x50: 
+                Down();
+                break;
+
+    	  	  case 0x2a: 
+                shift_pressed = true;
+                break;
+
+            //Qui il caps va acceso e spento
+
+    	  	  case 0x3a: 
+                caps_lock = !caps_lock;
+                break;
+
+    	  	  default:
+                KeyboardProcess(kbdus[scancode]);
+                break;
     	  }
     }
 }

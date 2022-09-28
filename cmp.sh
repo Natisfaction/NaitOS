@@ -20,8 +20,8 @@ i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/Drivers/isr.c" -o "build/isr.o" 
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/Drivers/irq.c" -o "build/irq.o" -I Drivers -Wall
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/Drivers/timer.c" -o "build/timer.o" -I Drivers -Wall
 i686-elf-gcc -ffreestanding -m32 -O2 -g -c "src/Drivers/keyboard.c" -o "build/keyboard.o" -I Drivers -Wall
-echo "========================== LINKING =========================="
+echo "=========================== LINKING =========================="
 i686-elf-ld -o "build/kernel.bin" -Tlinker.ld "build/start_kern.o" "build/in_asm.o" "build/gdt.o" "build/idt.o" "build/isr.o" "build/irq.o" "build/timer.o" "build/keyboard.o" "build/string.o" "build/stdio.o" "build/kernel.o" --oformat=binary
 cat "build/boot.bin" "build/kernel.bin" > "OS/NaitOS.img"
-echo "========================= EXECUTING ========================="
+echo "========================== EXECUTING ========================="
 qemu-system-i386 -drive format=raw,file="OS/NaitOS.img"
