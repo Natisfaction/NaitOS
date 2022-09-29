@@ -10,6 +10,7 @@
 #include "../Drivers/keyboard.h"
 
 extern void main(){
+    //Installa i componenti base, abilita gli interrupts, e tutto il resto
     gdt_install();
     idt_install();
     isr_install();
@@ -18,6 +19,8 @@ extern void main(){
     timer_install();
     keyboard_install();
     OSScreenInit();
+    //Ottiene i comandi
+    getcommand();
 
     return;
 }

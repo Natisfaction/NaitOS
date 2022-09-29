@@ -5,6 +5,7 @@
 
 #include "../header/stdio.h"
 #include "../header/in_asm.h"
+#include "../header/string.h"
 
 int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
@@ -99,10 +100,10 @@ uint16_t get_cursor_position(){
 
 //Carattere
 
-char getc(int x, int y){
+int getc(int x, int y){
     volatile char* VGA = (volatile char*)0xB8000;
     
-    return (int)VGA[2* (y * WIDTH + x)];
+    return VGA[2* (y * WIDTH + x)];
 }
 
 int getcol(int x, int y){
@@ -164,7 +165,7 @@ void scroll(){
 
     //Esegue lo scroll solo se la y non è minore di 25
 
-    if((checky >= HEIGHT-1) && normalprint){
+    if((checky >= HEIGHT-1) && normalprint == true){
 
         normalprint = false;
 
@@ -201,6 +202,12 @@ void scroll(){
             y = b-1, x = 0;
 
             printf("%s",buffer);
+        }
+
+        y = 23, x = 0;
+
+        for (size_t a = 0; a < WIDTH; a++){
+            putc('\0');
         }
 
         x = checkx, y = checky-1;
@@ -256,7 +263,7 @@ void print_unsigned(int u_num, int base){
         u_num /= base;
         buffer[cambio++] = Numeri[risultato];
     } while(u_num > 0);
-
+    
     while(--cambio >= 0){
         putc(buffer[cambio]);
     }
@@ -339,57 +346,130 @@ void printf(const char* fmt, ...){
 }
 
 //Calcolatrice
-/*
+
 void calcolatrice(){
+
     char num1ch, num2ch, segno;
+
     printf("\tInserisci il primo numero: ");
-    num1ch = input();
+    //Serve per fare in modo di avere un numero / segno
+    do{
+        num1ch = input();
+    } while (num1ch == '\0');
     printf("%c",num1ch);
-    printf("\n\tInserisci il secondo numero: ");
-    num2ch = input();
+
+    printf("\r\tInserisci il secondo numero: ");
+    do{
+        num2ch = input();
+    } while (num2ch == '\0');
     printf("%c",num2ch);
-    printf("\n\tInserisci il segno: ");
-    segno = (char)input();
+
+    printf("\r\tInserisci il segno: ");
+    do{
+        segno = input();
+    } while (segno == '\0');
     printf("%c",segno);
+
     int num1 = num1ch - '0';
     int num2 = num2ch - '0';
     int risultato;
+
     switch (segno){
         case '+':
             risultato = num1 + num2;
-            printf("\n\tIl risultato di %c %c %c e' %d\n%s",num1ch,segno,num2ch,risultato,ready);
+            printf("\r\tIl risultato di %c %c %c e' %d\r%s",num1ch,segno,num2ch,risultato,ready);
             break;
         case '-':
             risultato = num1 - num2;
-            printf("\n\tIl risultato di %c %c %c e' %d\n%s",num1ch,segno,num2ch,risultato,ready);
+            printf("\r\tIl risultato di %c %c %c e' %d\r%s",num1ch,segno,num2ch,risultato,ready);
             break;
         case '*':
             risultato = num1 * num2;
-            printf("\n\tIl risultato di %c %c %c e' %d\n%s",num1ch,segno,num2ch,risultato,ready);
+            printf("\r\tIl risultato di %c %c %c e' %d\r%s",num1ch,segno,num2ch,risultato,ready);
             break;
         case '/':
             risultato = num1 / num2;
-            printf("\n\tIl risultato di %c %c %c e' %d\n%s",num1ch,segno,num2ch,risultato,ready);
+            printf("\r\tIl risultato di %c %c %c e' %d\r%s",num1ch,segno,num2ch,risultato,ready);
             break;
         case '%':
             risultato = num1 % num2;
-            printf("\n\tIl risultato di %c %c %c e' %d\n%s",num1ch,segno,num2ch,risultato,ready);
+            printf("\r\tIl risultato di %c %c %c e' %d\r%s",num1ch,segno,num2ch,risultato,ready);
             break;
         default:
-            printf("\n\tErrore: non hai inserito un operatore valido!\n%s",ready);
+            printf("\r\tErrore: non hai inserito un operatore valido!\r%s",ready);
             break;
     }
 
     return;
 }
-*/
-//Main screen
 
 //Funzioni per la tastiera (processing del carattere)
 
-const char *Command[] = {"help","version","calc"};
-char *Usercmd;
-char actualchar;
+char Usercmd[32];
+bool command = false;
+int index;
+
+int input(){
+    int gotten = getc(x,y);
+    if (gotten != '\0'){
+        printf("\b");
+        return gotten;
+    } else {
+        return 0;
+    }
+}
+
+void getcommand(){
+
+    command = true;
+    char character;
+
+    while (true){
+
+        int i = 0;
+        
+        for (size_t aa = 0; aa < 32; aa++){
+            Usercmd[aa] = '\0';
+        }
+
+        while (true){
+
+            character = input();
+
+            if (character == '\0'){
+                continue;
+            } else if (character == '.'){
+                printf("\r");
+                break;
+            } else {
+                printf("%c",character);
+                Usercmd[i] = character;
+                i++;
+            }
+
+        }
+        
+        //Non potendo usare lo switch case, utilizzo l'if
+
+        if (strcmps(Usercmd,"help") == 0){
+            //help: restituisce i comandi
+            printf("\thelp: displays a list of commands\r\tversion: displays the OS version\r\tcalc: opens a calculator\r%s",ready);
+        } else if (strcmps(Usercmd,"version") == 0){
+            //version: restituisce la versione
+            printf("\tVersion: %s\r%s",NaitOS_v,ready);
+        } else if (strcmps(Usercmd,"calc") == 0){
+            //calc: apre la calcolatrice (ancora molto base)
+            calcolatrice();
+        } else if (strcmps(Usercmd,"cls") == 0){
+            //cls: pulisce lo schermo
+            OSScreenInit();
+        } else {
+            //Se non è stato inserito un comando valido, resituisci un errore
+            printf("\tCommand not recognized\r%s",ready);
+        }
+
+    }
+}
 
 //Schermata del sistema operativo
 

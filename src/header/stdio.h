@@ -46,12 +46,13 @@ void Sx();
 
 //Carattere & video
 
-char getc(int x, int y);
+int getc(int x, int y);
 int getcol(int x, int y);
-void putc(char c);
 
 void scroll();
 void cls();
+void putc(char c);
+
 void puts(const char* str);
 
 void print_unsigned(int u_num, int base);
@@ -60,7 +61,8 @@ void printf(const char* fmt, ...);
 
 //Tastiera
 
-void KeyboardProcess(int code);
+int input();
+void getcommand();
 
 //Schermo & errore
 
