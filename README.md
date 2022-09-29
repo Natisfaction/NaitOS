@@ -11,7 +11,7 @@ At first, it was supposed to be a little "experiment", but now became a really g
 
 ## When commands'll be implemented???
 
-I'm planning to make a lot of commands, but they'll become a part of the OS during the 1.5 release. 
+I'm planning to make a lot of commands, but they'll become a part of the OS during the 1.0 release. 
 
 # Features
 
