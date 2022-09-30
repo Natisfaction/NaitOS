@@ -402,32 +402,32 @@ int atoi(const char *s_num){
 
 void calcolatrice(){
 
-    printf("\r\tInserisci il primo numero: ");
+    printf("\r\tFirst number: ");
 
     volatile char *num1ch = input();
     int num1 = atoi(num1ch);
     
-    printf("\r\tInserisci il secondo numero: ");
+    printf("\r\tSecond number: ");
     
     volatile char *num2ch = input();
     int num2 = atoi(num2ch);
 
-    printf("\r\tInserisci il segno: ");
+    printf("\r\tOperator: ");
     
     volatile char *segnoch = input();
     
     if (strcmps(segnoch,"+") == 0){
-        printf("\r\r\tLa somma tra %d e %d vale %d",num1,num2,num1+num2);
+        printf("\r\r\t%d + %d = %d",num1,num2,num1+num2);
     } else if (strcmps(segnoch,"-") == 0){
-        printf("\r\r\tLa differenza tra %d e %d vale %d",num1,num2,num1-num2);
+        printf("\r\r\t%d - %d = %d",num1,num2,num1-num2);
     } else if (strcmps(segnoch,"*") == 0){
-        printf("\r\r\tIl prodotto tra %d e %d vale %d",num1,num2,num1*num2);
+        printf("\r\r\t%d * %d = %d",num1,num2,num1*num2);
     } else if (strcmps(segnoch,"/") == 0){
-        printf("\r\r\tIl quoto tra %d e %d vale %d",num1,num2,num1/num2);
+        printf("\r\r\t%d / %d = %d",num1,num2,num1/num2);
     } else if (strcmps(segnoch,"%") == 0){
-        printf("\r\r\tIl modulo tra %d e %d vale %d",num1,num2,num1%num2);
+        printf("\r\r\t%d %% %d = %d",num1,num2,num1%num2);
     } else {
-        printf("\r\r\tHai inserito un'operatore non valido...");
+        printf("\r\r\tOperator not recognized...");
     }
 
     return;
@@ -447,7 +447,7 @@ void CMode(){
             printf("\r%s",ready);
         } else if (strcmps(Usercmd,"version") == 0){
             //version: restituisce la versione
-            printf("\r\tVersion: %s\r",NaitOS_v);
+            printf("\r\tVersion: %s",NaitOS_v);
             printf("\r%s",ready);
         } else if (strcmps(Usercmd,"calc") == 0){
             //calc: apre la calcolatrice (ancora molto base)
@@ -462,13 +462,15 @@ void CMode(){
             printf("\r%s",ready);
         }
     }
+
+    return;
 }
 
 //Schermata del sistema operativo
 
 void OSScreenInit(){
     cls();
-    printf("[NaitOS version 0.5]\r%s",ready);
+    printf("[%s]\r%s",NaitOS_v,ready);
     
     return;
 }
