@@ -48,23 +48,22 @@ void Sx();
 
 int getc(int x, int y);
 int getcol(int x, int y);
-
 void scroll();
+
 void cls();
 void putc(char c);
-
 void puts(const char* str);
 
 void print_unsigned(int u_num, int base);
-void print_signed(int s_num, int base);
+void print_signed(int si_num, int base);
 void printf(const char* fmt, ...);
 
-//Tastiera
-
 int input();
-void getcommand();
+int atoi(const char *s_num);
+int sign(const char* sign_string);
 
 //Schermo & errore
 
+void CMode();
 void OSScreenInit();
 extern void ErrorScreenInit();

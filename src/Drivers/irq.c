@@ -18,6 +18,7 @@ extern void irq13();
 extern void irq14();
 extern void irq15();
 
+//16 spazi per le routines
 
 void *irq_routines[16] =
         {
@@ -26,20 +27,17 @@ void *irq_routines[16] =
         };
 
 
-void irq_install_handler(int irq, void (*handler)(regs *r))
-{
+void irq_install_handler(int irq, void (*handler)(regs *r)){
     irq_routines[irq] = (void*)handler;
 }
 
 
-void irq_uninstall_handler(int irq)
-{
+void irq_uninstall_handler(int irq){
     irq_routines[irq] = 0;
 }
 
 
-void irq_remap(void)
-{
+void irq_remap(void){
     outb(0x20, 0x11);
     outb(0xA0, 0x11);
     outb(0x21, 0x20);
@@ -54,8 +52,7 @@ void irq_remap(void)
 
 static volatile int currentInterrupts[15];
 
-void irq_install()
-{
+void irq_install(){
     irq_remap();
 
     idt_set_gate(32, (unsigned)irq0, 0x08, 0x8E);
@@ -81,21 +78,18 @@ void irq_install()
 }
 
 
-extern void irq_handler(regs *r)
-{
+extern void irq_handler(regs *r){
     currentInterrupts[r -> int_no - 32] = 1;
     void (*handler)(struct regs *r);
 
 
     handler = (void (*)(regs*))irq_routines[r->int_no - 32];
-    if (handler)
-    {
+    if (handler){
         handler(r);
     }
 
 
-    if (r->int_no >= 40)
-    {
+    if (r->int_no >= 40){
         outb(0xA0, 0x20);
     }
 

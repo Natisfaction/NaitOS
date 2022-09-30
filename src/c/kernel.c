@@ -19,8 +19,8 @@ extern void main(){
     timer_install();
     keyboard_install();
     OSScreenInit();
-    //Ottiene i comandi
-    getcommand();
+    //Apre la finestra dei comandi
+    CMode();
 
     return;
 }

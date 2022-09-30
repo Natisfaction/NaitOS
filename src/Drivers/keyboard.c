@@ -42,7 +42,7 @@ unsigned char kbdus[128] =
     0,	/* All other keys are undefined */
 };
 
-bool shift_pressed = false;
+bool shift = false;
 bool caps_lock = false;
 
 void keyboard_handler(struct regs *r){
@@ -52,11 +52,11 @@ void keyboard_handler(struct regs *r){
     
     if (scancode & 0x80){
 
-      //Controllo se lo shift è stato premuto
+        //Controllo se lo shift è stato premuto
 
         switch(scancode){
     		case 0xaa:
-                shift_pressed = false;
+                shift = false;
                 break;
         }
 
@@ -80,7 +80,7 @@ void keyboard_handler(struct regs *r){
                 break;
 
     	  	case 0x2a: 
-                shift_pressed = true;
+                shift = true;
                 break;
 
             //Qui il caps va acceso e spento

@@ -12,7 +12,7 @@ int x = 0,  y = 0;
 bool normalprint = true;          //Variabile di sicurezza (true se sta stampando, false se deve andare a libero schermo)
 
 const char* ready = "Ready! > ";
-const char* NaitOS_v = "NaitOS Version 0.5";
+const char* NaitOS_v = "NaitOS Version 1.0";
 
 //Cursore
 
@@ -271,14 +271,14 @@ void print_unsigned(int u_num, int base){
     return;
 }
 
-void print_signed(int s_num, int base){
-    if(s_num < 0){
+void print_signed(int si_num, int base){
+    if(si_num < 0){
         putc('-');
-        s_num *= -1;
-        print_unsigned(s_num,base);
-    } else if(s_num > 0){
+        si_num *= -1;
+        print_unsigned(si_num,base);
+    } else if(si_num > 0){
         putc('+');
-        print_unsigned(s_num,base);
+        print_unsigned(si_num,base);
     } else {
         putc('0');
     }
@@ -347,127 +347,120 @@ void printf(const char* fmt, ...){
 
 //Calcolatrice
 
+int input(){
+
+    int bb = 0;
+
+    char buffer[32];
+
+    for (size_t cc = 0; cc < 32; cc++){
+        buffer[cc] = '\0';
+    }
+
+    do{
+
+        int gotten = getc(x,y);
+
+        if (gotten != '\0' && gotten != '.'){
+            printf("\b%c",gotten);
+            buffer[bb] = gotten;
+            bb++;
+
+        } else if (gotten == '.'){
+            printf("\b");
+            break;
+
+        } else {
+            continue;
+        }
+
+    } while (true);
+    
+    return buffer;
+}
+
+int atoi(const char *s_num){
+
+    int result = 0;
+    int num_sign = 1;
+
+    while (('-' == (*s_num)) || ((*s_num) == '+')){
+
+        if (*s_num == '-')
+            num_sign *= -1;
+        s_num++;
+    }
+
+    while ((*s_num >= '0') && (*s_num <= '9')){
+        
+        result = (result * 10) + ((*s_num) - '0');
+        s_num++;
+    }
+
+    return (result * num_sign);
+}
+
 void calcolatrice(){
 
-    char num1ch, num2ch, segno;
+    printf("\r\tInserisci il primo numero: ");
 
-    printf("\tInserisci il primo numero: ");
-    //Serve per fare in modo di avere un numero / segno
-    do{
-        num1ch = input();
-    } while (num1ch == '\0');
-    printf("%c",num1ch);
-
+    volatile char *num1ch = input();
+    int num1 = atoi(num1ch);
+    
     printf("\r\tInserisci il secondo numero: ");
-    do{
-        num2ch = input();
-    } while (num2ch == '\0');
-    printf("%c",num2ch);
+    
+    volatile char *num2ch = input();
+    int num2 = atoi(num2ch);
 
     printf("\r\tInserisci il segno: ");
-    do{
-        segno = input();
-    } while (segno == '\0');
-    printf("%c",segno);
-
-    int num1 = num1ch - '0';
-    int num2 = num2ch - '0';
-    int risultato;
-
-    switch (segno){
-        case '+':
-            risultato = num1 + num2;
-            printf("\r\tIl risultato di %c %c %c e' %d\r%s",num1ch,segno,num2ch,risultato,ready);
-            break;
-        case '-':
-            risultato = num1 - num2;
-            printf("\r\tIl risultato di %c %c %c e' %d\r%s",num1ch,segno,num2ch,risultato,ready);
-            break;
-        case '*':
-            risultato = num1 * num2;
-            printf("\r\tIl risultato di %c %c %c e' %d\r%s",num1ch,segno,num2ch,risultato,ready);
-            break;
-        case '/':
-            risultato = num1 / num2;
-            printf("\r\tIl risultato di %c %c %c e' %d\r%s",num1ch,segno,num2ch,risultato,ready);
-            break;
-        case '%':
-            risultato = num1 % num2;
-            printf("\r\tIl risultato di %c %c %c e' %d\r%s",num1ch,segno,num2ch,risultato,ready);
-            break;
-        default:
-            printf("\r\tErrore: non hai inserito un operatore valido!\r%s",ready);
-            break;
+    
+    volatile char *segnoch = input();
+    
+    if (strcmps(segnoch,"+") == 0){
+        printf("\r\r\tLa somma tra %d e %d vale %d",num1,num2,num1+num2);
+    } else if (strcmps(segnoch,"-") == 0){
+        printf("\r\r\tLa differenza tra %d e %d vale %d",num1,num2,num1-num2);
+    } else if (strcmps(segnoch,"*") == 0){
+        printf("\r\r\tIl prodotto tra %d e %d vale %d",num1,num2,num1*num2);
+    } else if (strcmps(segnoch,"/") == 0){
+        printf("\r\r\tIl quoto tra %d e %d vale %d",num1,num2,num1/num2);
+    } else if (strcmps(segnoch,"%") == 0){
+        printf("\r\r\tIl modulo tra %d e %d vale %d",num1,num2,num1%num2);
+    } else {
+        printf("\r\r\tHai inserito un'operatore non valido...");
     }
 
     return;
 }
 
-//Funzioni per la tastiera (processing del carattere)
+//Command mode
 
-char Usercmd[32];
-bool command = false;
-int index;
-
-int input(){
-    int gotten = getc(x,y);
-    if (gotten != '\0'){
-        printf("\b");
-        return gotten;
-    } else {
-        return 0;
-    }
-}
-
-void getcommand(){
-
-    command = true;
-    char character;
-
+void CMode(){
+    
     while (true){
-
-        int i = 0;
         
-        for (size_t aa = 0; aa < 32; aa++){
-            Usercmd[aa] = '\0';
-        }
-
-        while (true){
-
-            character = input();
-
-            if (character == '\0'){
-                continue;
-            } else if (character == '.'){
-                printf("\r");
-                break;
-            } else {
-                printf("%c",character);
-                Usercmd[i] = character;
-                i++;
-            }
-
-        }
-        
-        //Non potendo usare lo switch case, utilizzo l'if
+        char *Usercmd = input();
 
         if (strcmps(Usercmd,"help") == 0){
             //help: restituisce i comandi
-            printf("\thelp: displays a list of commands\r\tversion: displays the OS version\r\tcalc: opens a calculator\r%s",ready);
+            printf("\r\thelp: displays a list of commands\r\tversion: displays the OS version\r\tcalc: opens a calculator\r\tcls: clears the screen");
+            printf("\r%s",ready);
         } else if (strcmps(Usercmd,"version") == 0){
             //version: restituisce la versione
-            printf("\tVersion: %s\r%s",NaitOS_v,ready);
+            printf("\r\tVersion: %s\r",NaitOS_v);
+            printf("\r%s",ready);
         } else if (strcmps(Usercmd,"calc") == 0){
             //calc: apre la calcolatrice (ancora molto base)
             calcolatrice();
+            printf("\r%s",ready);
         } else if (strcmps(Usercmd,"cls") == 0){
             //cls: pulisce lo schermo
             OSScreenInit();
         } else {
             //Se non è stato inserito un comando valido, resituisci un errore
-            printf("\tCommand not recognized\r%s",ready);
+            printf("\r\tCommand not recognized");
+            printf("\r%s",ready);
         }
-
     }
 }
 
