@@ -7,17 +7,11 @@
 
 NaitOS is an Operating System, that is currently under development, written by a young man with a lot of dedication.
 
-At first, it was supposed to be a little "experiment", but now became a really good passion, and I'm really proud of it.
+At first, it was supposed to be a little "experiment", but now became a really good passion, and I'm really proud of myself.
 
-## What are the current commands???
+## When commands'll be implemented???
 
-Right now, the OS has the following command:
- - *help*    --> Displays the command list
- - *version* --> Displays the OS version
- - *calc*    --> Opens a basic calculator
- - *cls*     --> Clears the screen
-
-    ***More coming up soon!!!***
+I'm planning to make a lot of commands, but they'll become a part of the OS during the 1.5 release. 
 
 # Features
 
