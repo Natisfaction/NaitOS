@@ -5,15 +5,15 @@
 unsigned char kbdus[128] =
 {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */
-    '9', '0', '-', '=', '\b',	/* Backspace */
+    '9', '0', '\'', '`', '\b',	/* Backspace */
     '\t',			/* Tab */
     'q', 'w', 'e', 'r',	/* 19 */
-    't', 'y', 'u', 'i', 'o', 'p', '[', ']', '.',	/* Enter key */
+    't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\1',	/* Enter key */
     0,			/* 29   - Control */
-    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',	/* 39 */
-    '\'', '`',   0,		/* Left shift */
-    '\\', 'z', 'x', 'c', 'v', 'b', 'n',			/* 49 */
-    'm', ',', '.', '/',   0,				/* Right shift */
+    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '@',	/* 39 */
+    '#', '\\',   0,		/* Left shift */
+    '§', 'z', 'x', 'c', 'v', 'b', 'n',			/* 49 */
+    'm', ',', '.', '-',   0,				/* Right shift */
     '*',
     0,	/* Alt */
     ' ',/* Space bar */
@@ -42,7 +42,7 @@ unsigned char kbdus[128] =
     0,	/* All other keys are undefined */
 };
 
-bool shift = false;
+bool shift = false, ctrl = false;
 bool caps_lock = false;
 
 void keyboard_handler(struct regs *r){
@@ -63,6 +63,9 @@ void keyboard_handler(struct regs *r){
 	} else {
     	
     	switch(scancode){
+
+            //4 frecce
+            
     	  	case 0x4b:
                 Sx();
                 break;
@@ -78,8 +81,25 @@ void keyboard_handler(struct regs *r){
     	  	case 0x50: 
                 Down();
                 break;
+            
+            //Esc
+
+            case 0x01:
+                break;
+
+            //Il ctrl
+
+            case 0x1d:
+                ctrl = true;
+                break;
+
+            //I due shift
 
     	  	case 0x2a: 
+                shift = true;
+                break;
+
+    	  	case 0x36: 
                 shift = true;
                 break;
 
@@ -88,12 +108,92 @@ void keyboard_handler(struct regs *r){
     	  	case 0x3a: 
                 caps_lock = !caps_lock;
                 break;
+            
+            //Altrimenti esegui la conversione scancode / carattere
 
     	  	default:
-                putc(kbdus[scancode]);
+                computate(kbdus[scancode]);
                 break;
     	}
     }
+}
+
+int computate(int digit){
+    if ((shift || caps_lock) && (digit >= 97 && digit <= 122)){
+        putc(digit-32);
+    } else if (shift){
+        switch (digit){
+            case '0':
+                putc('=');
+                break;
+
+            case '1':
+                putc('!');
+                break;
+
+            case '2':
+                putc('"');
+                break;
+
+            case '3':
+                putc('£');
+                break;
+
+            case '4':
+                putc('$');
+                break;
+
+            case '5':
+                putc('%');
+                break;
+
+            case '6':
+                putc('&');
+                break;
+
+            case '7':
+                putc('/');
+                break;
+
+            case '8':
+                putc('(');
+                break;
+
+            case '9':
+                putc(')');
+                break;
+
+            case '\'':
+                putc('?');
+                break;
+
+            case '`':
+                putc('^');
+                break;
+
+            case ',':
+                putc(';');
+                break;
+
+            case '.':
+                putc(':');
+                break;
+
+            case '-':
+                putc('_');
+                break;
+
+            case '\\':
+                putc('|');
+                break;
+
+            default:
+                break;
+        }
+    } else {
+        putc(digit);
+    }
+    
 }
 
 void keyboard_install(){

@@ -4,4 +4,5 @@
 #include "../header/stdio.h"
 
 void keyboard_handler(struct regs *r);
+int computate();
 void keyboard_install();

@@ -9,7 +9,7 @@
 
 int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
-bool normalprint = true;          //Variabile di sicurezza (true se sta stampando, false se deve andare a libero schermo)
+bool normalprint = true, called = false, done = false;
 
 const char* ready = "Ready! > ";
 const char* NaitOS_v = "NaitOS Version 1.0";
@@ -50,44 +50,6 @@ void update_cursor_full(uint16_t pos){
     return;
 }
 
-//Commentate per bugs
-
-void Up(){
-    //if (y != 1){
-    //    y--;
-    //}
-    //update_cursor(x,y);
-
-    return;
-}
-
-void Down(){
-    //if (y != 23){
-    //    y++;
-    //}
-    //update_cursor(x,y);
-
-    return;
-}
-
-void Dx(){
-    //if (!(x == 79 && y == 23)){
-    //    x++;
-    //}
-    //update_cursor(x,y);
-
-    return;
-}
-
-void Sx(){
-    //if (!(x == 0 && y == 1)){
-    //    x--;
-    //}
-    //update_cursor(x,y);
-
-    return;
-}
-
 uint16_t get_cursor_position(){
     uint16_t pos = 0;
     outb(0x3D4, 0x0F);
@@ -96,6 +58,32 @@ uint16_t get_cursor_position(){
     pos |= ((uint16_t)inb(0x3D5)) << 8;
 
 	return pos;
+}
+
+//Inutilizzate
+
+void Up(){
+    //Farà qualcosa...
+
+    return;
+}
+
+void Down(){
+    //Farà qualcosa...
+
+    return;
+}
+
+void Dx(){
+    //Farà qualcosa...
+
+    return;
+}
+
+void Sx(){
+    //Farà qualcosa...
+
+    return;
 }
 
 //Carattere
@@ -345,7 +333,7 @@ void printf(const char* fmt, ...){
     return;
 }
 
-//Calcolatrice
+//Input (NON MODIFICARE)
 
 int input(){
 
@@ -361,12 +349,14 @@ int input(){
 
         int gotten = getc(x,y);
 
-        if (gotten != '\0' && gotten != '.'){
+        // \1 sarebbe il carattere di invio
+
+        if (gotten != '\0' && gotten != '\1'){
             printf("\b%c",gotten);
             buffer[bb] = gotten;
             bb++;
 
-        } else if (gotten == '.'){
+        } else if (gotten == '\1'){
             printf("\b");
             break;
 
@@ -376,8 +366,10 @@ int input(){
 
     } while (true);
     
-    return buffer;
+    return (char*)buffer;
 }
+
+//Da stringa ad int
 
 int atoi(const char *s_num){
 
@@ -400,21 +392,23 @@ int atoi(const char *s_num){
     return (result * num_sign);
 }
 
+//Calcolatrice
+
 void calcolatrice(){
 
     printf("\r\tFirst number: ");
 
-    volatile char *num1ch = input();
+    char *num1ch = (char*)input();
     int num1 = atoi(num1ch);
     
     printf("\r\tSecond number: ");
     
-    volatile char *num2ch = input();
+    char *num2ch = (char*)input();
     int num2 = atoi(num2ch);
 
     printf("\r\tOperator: ");
     
-    volatile char *segnoch = input();
+    char *segnoch = (char*)input();
     
     if (strcmps(segnoch,"+") == 0){
         printf("\r\r\t%d + %d = %d",num1,num2,num1+num2);
@@ -439,7 +433,7 @@ void CMode(){
     
     while (true){
         
-        char *Usercmd = input();
+        char *Usercmd = (char*)input();
 
         if (strcmps(Usercmd,"help") == 0){
             //help: restituisce i comandi

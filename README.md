@@ -28,9 +28,17 @@ Current features include:
  - **Printing to screen** implemented
  - **Error management** fully implemented
 
+## How to...
+
+...cross compile the OS???
+ - To cross-compile the OS, you need to build an i686 cross compiler. You can watch this tutorial to learn how to do it: https://www.youtube.com/watch?v=TgIdFVOV_0U , or you can just download one pre-made from here: https://github.com/lordmilko/i686-elf-tools/releases . If you done all the steps correctly, you only need to edit a bit the "cmp.sh" file, and it should work.
+
+...launch the OS???
+ - To launch the OS, you need a specific emulator: *qemu-system-i386*. You can download it from https://www.qemu.org/download/
+
 ## What next???
 
-A lot of features are coming up, the main ones are the following:
+A lot of features are coming up in version 2.0 (not soon), the main ones are the following:
  - **Memory management**
  - **File System** (FAT12)
 
