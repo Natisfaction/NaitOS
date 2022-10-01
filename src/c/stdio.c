@@ -12,7 +12,7 @@ int x = 0,  y = 0;
 bool normalprint = true, called = false, done = false;
 
 const char* ready = "Ready! > ";
-const char* NaitOS_v = "NaitOS Version 1.0";
+const char* NaitOS_v = "NaitOS Version 1.5";
 
 //Cursore
 
@@ -366,7 +366,7 @@ int input(){
 
     } while (true);
     
-    return (char*)buffer;
+    return buffer;
 }
 
 //Da stringa ad int
