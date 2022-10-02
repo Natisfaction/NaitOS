@@ -64,6 +64,6 @@ int sign(const char* sign_string);
 
 //Schermo & errore
 
-void CMode();
+void CMDode();
 void OSScreenInit();
 extern void ErrorScreenInit();

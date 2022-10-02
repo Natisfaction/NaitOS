@@ -9,10 +9,10 @@
 
 int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
-bool normalprint = true, called = false, done = false;
+bool normalprint = true;
 
 const char* ready = "Ready! > ";
-const char* NaitOS_v = "NaitOS Version 1.5";
+const char* NaitOS_v = "NaitOS Version 1.55";
 
 //Cursore
 
@@ -109,9 +109,8 @@ void putc(char c){
             break;
         
         case '\t':
-            for (size_t i = 0; i < 3; i++){
+            for (size_t i = 0; i < 3; i++)
                 putc(' ');
-            }
             break;
 
         case '\r':
@@ -120,9 +119,20 @@ void putc(char c){
             break;
         
         case '\b':
-            x--;
-            putc('\0');
-            x--;
+            if (x == 0 && y != 0){
+                x = WIDTH;
+                y--;
+
+                x--;
+                putc('\0');
+                x--;
+            } else if (x == 0 && y == 0) {
+                //Non fare nulla
+            } else {
+                x--;
+                putc('\0');
+                x--;
+            }
             break;
 
         default:
@@ -161,9 +171,8 @@ void scroll(){
 
         y = 0, x = 0;
 
-        for (size_t a = 0; a < WIDTH; a++){
+        for (size_t a = 0; a < WIDTH; a++)
             putc('\0');
-        }
         
 
         for (size_t b = 1; b != HEIGHT; b++){
@@ -181,9 +190,8 @@ void scroll(){
 
             y = b, x = 0;
 
-            for (size_t c = 0; c < WIDTH; c++){
+            for (size_t c = 0; c < WIDTH; c++)
                 putc('\0');
-            }
 
             //Scrivi alla y precedente il buffer
 
@@ -194,9 +202,8 @@ void scroll(){
 
         y = 23, x = 0;
 
-        for (size_t a = 0; a < WIDTH; a++){
+        for (size_t a = 0; a < WIDTH; a++)
             putc('\0');
-        }
 
         x = checkx, y = checky-1;
 
@@ -215,11 +222,9 @@ void cls(){
     x = 0;
     y = 0;
 
-    for(size_t h = 0; h < HEIGHT; h++){
-        for (size_t j = 0; j < WIDTH; j++){
+    for(size_t h = 0; h < HEIGHT; h++)
+        for (size_t j = 0; j < WIDTH; j++)
             putc('\0');
-        }
-    }
 
     x = 0;
     y = 0;
@@ -333,38 +338,123 @@ void printf(const char* fmt, ...){
     return;
 }
 
-//Input (NON MODIFICARE)
+//Input
 
 int input(){
 
     int bb = 0;
 
-    char buffer[32];
+    bool end = false;
 
-    for (size_t cc = 0; cc < 32; cc++){
+    int howmany = 40;
+
+    char buffer[howmany];
+
+    for (size_t cc = 0; cc < howmany; cc++)
         buffer[cc] = '\0';
-    }
 
     do{
 
         int gotten = getc(x,y);
 
-        // \1 sarebbe il carattere di invio
+        switch (gotten){
 
-        if (gotten != '\0' && gotten != '\1'){
-            printf("\b%c",gotten);
-            buffer[bb] = gotten;
-            bb++;
+            case '\0':
+                //Se è un null non fare nulla
+                break;
 
-        } else if (gotten == '\1'){
-            printf("\b");
-            break;
+            //Invio
 
-        } else {
-            continue;
+            case '\20':
+                printf("\b");
+                end = true;
+                break;
+            
+            //Backspace
+
+            case '\21':
+                printf("\b");
+                if (bb > 0){
+                    printf("\b");
+                    bb--;
+                    buffer[bb] = '\0';
+                }
+                break;
+
+            //F1 - F12
+
+            case '\1':
+                printf("\b");
+                //end = true;
+                break;
+            
+            case '\2':
+                printf("\b");
+                //end = true;
+                break;
+            
+            case '\3':
+                printf("\b");
+                //end = true;
+                break;
+            
+            case '\4':
+                printf("\b");
+                //end = true;
+                break;
+            
+            case '\5':
+                printf("\b");
+                //end = true;
+                break;
+            
+            case '\6':
+                printf("\b");
+                //end = true;
+                break;
+            
+            case '\7':
+                printf("\b");
+                //end = true;
+                break;
+            
+            case '\18':
+                printf("\b");
+                //end = true;
+                break;
+            
+            case '\19':
+                printf("\b");
+                //end = true;
+                break;
+            
+            case '\10':
+                printf("\b");
+                //end = true;
+                break;
+            
+            case '\11':
+                printf("\b");
+                //end = true;
+                break;
+            
+            case '\12':
+                printf("\b");
+                //end = true;
+                break;
+
+            default:
+                printf("\b%c",gotten);
+                buffer[bb] = gotten;
+                bb++;
+                break;
         }
 
-    } while (true);
+        if (bb >= howmany){
+            end = true;
+        }
+
+    } while (end == false);
     
     return buffer;
 }
@@ -429,7 +519,9 @@ void calcolatrice(){
 
 //Command mode
 
-void CMode(){
+void CMDode(){
+
+    OSScreenInit();
     
     while (true){
         
@@ -450,13 +542,17 @@ void CMode(){
         } else if (strcmps(Usercmd,"cls") == 0){
             //cls: pulisce lo schermo
             OSScreenInit();
+        } else if (strcmps(Usercmd,"get") == 0){
+            //cls: pulisce lo schermo
+            printf("\r\tX: %u Y: %u",get_cursor_position()%80,get_cursor_position()/80);
+            printf("\r%s",ready);
         } else {
             //Se non è stato inserito un comando valido, resituisci un errore
-            printf("\r\tCommand not recognized");
+            printf("\r\tCommand not recognized, type ""help"" for a list of commands");
             printf("\r%s",ready);
         }
     }
-
+    
     return;
 }
 

@@ -2,13 +2,15 @@
 #include "../Drivers/keyboard.h"
 #include "../header/stdio.h"
 
+//SCANCODE SET 1
+
 unsigned char kbdus[128] =
 {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */
-    '9', '0', '\'', '`', '\b',	/* Backspace */
+    '9', '0', '\'', '`', '\21',	/* Backspace */
     '\t',			/* Tab */
     'q', 'w', 'e', 'r',	/* 19 */
-    't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\1',	/* Enter key */
+    't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\20',	/* Enter key */
     0,			/* 29   - Control */
     'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '@',	/* 39 */
     '#', '\\',   0,		/* Left shift */
@@ -18,9 +20,9 @@ unsigned char kbdus[128] =
     0,	/* Alt */
     ' ',/* Space bar */
     0,	/* Caps lock */
-    0,	/* 59 - F1 key ... > */
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,	/* < ... F10 */
+    '\1',	/* 59 - F1 key ... > */
+    '\2', '\3', '\4', '\5', '\6', '\7', '\18', '\19',
+    '\10',	/* < ... F10 */
     0,	/* 69 - Num lock*/
     0,	/* Scroll Lock */
     0,	/* Home key */
@@ -37,8 +39,8 @@ unsigned char kbdus[128] =
     0,	/* Insert Key */
     0,	/* Delete Key */
     0,   0,   0,
-    0,	/* F11 Key */
-    0,	/* F12 Key */
+    '\11',	/* F11 Key */
+    '\12',	/* F12 Key */
     0,	/* All other keys are undefined */
 };
 
@@ -52,10 +54,19 @@ void keyboard_handler(struct regs *r){
     
     if (scancode & 0x80){
 
-        //Controllo se lo shift è stato premuto
+        //Controllo se alcuni tasti speciali sono stati rilasciati
 
         switch(scancode){
+
     		case 0xaa:
+                shift = false;
+                break;
+
+            case 0x9D:
+                ctrl = false;
+                break;
+
+            case 0xB6:
                 shift = false;
                 break;
         }
@@ -85,8 +96,8 @@ void keyboard_handler(struct regs *r){
             //Esc
 
             case 0x01:
-                break;
-
+                break;           
+            
             //Il ctrl
 
             case 0x1d:
@@ -190,6 +201,18 @@ int computate(int digit){
             default:
                 break;
         }
+    } else if (ctrl) {
+
+        //Uncomment if you need to use Ctrl, but do not use puts
+
+        /* switch (digit){
+            case 'Something...':
+                putc('Something...');
+                break;
+
+            default:
+                break;
+        } */
     } else {
         putc(digit);
     }

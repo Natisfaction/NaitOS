@@ -18,9 +18,8 @@ extern void main(){
     __asm__ volatile("sti");
     timer_install();
     keyboard_install();
-    OSScreenInit();
     //Apre la finestra dei comandi
-    CMode();
+    CMDode();
 
     return;
 }
