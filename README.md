@@ -5,9 +5,9 @@
 
 ## What is NaitOS???
 
-NaitOS is an Operating System, that is currently under development, written by a young man with a lot of dedication.
+NaitOS is an Operating System, currently under development, by a young man.
 
-At first, it was supposed to be a little "experiment", but now became a really good passion, and I'm really proud of myself.
+At first, it was supposed to be a little challenge, but has now became a really good passion.
 
 ## What are the current commands???
 
@@ -15,6 +15,7 @@ Right now, the OS has the following command:
  - *help*    --> Displays the command list
  - *version* --> Displays the OS version
  - *calc*    --> Opens a basic calculator
+ - *conv*    --> Opens a basic number converter
  - *cls*     --> Clears the screen
 
     ***More coming up soon!!!***
@@ -24,17 +25,17 @@ Right now, the OS has the following command:
 Current features include:
  - **Bootloader** fully implemented
  - **IDT**, **GDT**, **ISR**, **IRQ**
- - **Keyboard** implemented
- - **Printing to screen** implemented
+ - **Keyboard** fully implemented
+ - **Printing to screen** fully implemented
  - **Error management** fully implemented
 
 ## How to...
 
 ...cross compile the OS???
- - To cross-compile the OS, you need to build an i686 cross compiler. You can watch this tutorial to learn how to do it: https://www.youtube.com/watch?v=TgIdFVOV_0U , or you can just download one pre-made from here: https://github.com/lordmilko/i686-elf-tools/releases . If you done all the steps correctly, you only need to edit a bit the "cmp.sh" file, and it should work.
+ - To cross-compile the OS, you'll need to build an i686 cross compiler. You can watch this tutorial to learn how to do it: https://www.youtube.com/watch?v=TgIdFVOV_0U , or you can just download a pre-made cross-compiler from here: https://github.com/lordmilko/i686-elf-tools/releases . If you have done all the steps correctly, you'll only need to edit a bit the "cmp.sh" file, and it should work.
 
 ...launch the OS???
- - To launch the OS, you need a specific emulator: *qemu-system-i386*. You can download it from https://www.qemu.org/download/
+ - To launch the OS, you'll need a specific emulator: *qemu-system-i386*. You can download it from https://www.qemu.org/download/
 
 ## What next???
 
