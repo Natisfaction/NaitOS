@@ -347,7 +347,7 @@ int input(){
 
             case '\14':
                 putc('\b');
-                if (!restored && command){
+                if (!restored && command && bb == 0){
                     for (bb = 0; oldbuffer[bb] != 0; bb++){
                         buffer[bb] = oldbuffer[bb];
                         putc(buffer[bb]);
@@ -521,13 +521,13 @@ void calcolatrice(){
 
 void convertitore(){
     
-    printf("\r\tInserisci il numero in base 10: ");
+    printf("\r\tType the base 10 number: ");
     
     int decnum = atoi(input());
 
-    printf("\r\tNumero in base H: %x",decnum);
-    printf("\r\tNumero in base 8: %o",decnum);
-    printf("\r\tNumero in base 2: %b",decnum);
+    printf("\r\tNumber in base H: %x",decnum);
+    printf("\r\tNumber in base 8: %o",decnum);
+    printf("\r\tNumber in base 2: %b",decnum);
 
     return;
 }

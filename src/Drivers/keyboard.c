@@ -119,6 +119,11 @@ void keyboard_handler(struct regs *r){
                 shift = true;
                 break;
 
+            //Alt
+            
+            case 0x38:
+                break;
+
             //Qui il caps va acceso e spento
 
     	  	case 0x3a: 
