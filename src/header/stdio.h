@@ -36,14 +36,6 @@ void update_cursor(int x, int y);
 void update_cursor_full(uint16_t pos);
 uint16_t get_cursor_position();
 
-//Inutilizzate 
-
-void Up();
-void Down();
-void Dx();
-
-void Sx();
-
 //Carattere & video
 
 int getc(int x, int y);

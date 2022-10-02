@@ -26,7 +26,7 @@ unsigned char kbdus[128] =
     0,	/* 69 - Num lock*/
     0,	/* Scroll Lock */
     0,	/* Home key */
-    0,	/* Up Arrow */
+    '\14',	/* Up Arrow */
     0,	/* Page Up */
     '-',
     0,	/* Left Arrow */
@@ -77,20 +77,25 @@ void keyboard_handler(struct regs *r){
 
             //4 frecce
             
+            //Sinistra
+
     	  	case 0x4b:
-                Sx();
                 break;
 
-    	  	case 0x4d: 
-                Dx();
+            //Destra
+            
+    	  	case 0x4d:
                 break;
 
+            //Sù
+            
     	  	case 0x48: 
-                Up();
+                putc('\14');
                 break;
 
-    	  	case 0x50: 
-                Down();
+            //Giù
+            
+    	  	case 0x50:
                 break;
             
             //Esc

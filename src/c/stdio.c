@@ -9,10 +9,13 @@
 
 int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
-bool normalprint = true;
+bool normalprint = true, command = false;
 
 const char* ready = "Ready! > ";
 const char* NaitOS_v = "NaitOS Version 1.55";
+
+const char* helpdoc = "help: displays a list of commands\r\tversion: displays the OS version\r\tcalc: opens a calculator\r\tconv: opens a number converter\r\tcls: clears the screen";
+char oldbuffer[32] = "";
 
 //Cursore
 
@@ -58,32 +61,6 @@ uint16_t get_cursor_position(){
     pos |= ((uint16_t)inb(0x3D5)) << 8;
 
 	return pos;
-}
-
-//Inutilizzate
-
-void Up(){
-    //Farà qualcosa...
-
-    return;
-}
-
-void Down(){
-    //Farà qualcosa...
-
-    return;
-}
-
-void Dx(){
-    //Farà qualcosa...
-
-    return;
-}
-
-void Sx(){
-    //Farà qualcosa...
-
-    return;
 }
 
 //Carattere
@@ -245,7 +222,7 @@ void puts(const char* str){
     return;
 }
 
-const char Numeri[] = "0123456789ABCDE";
+const char Numeri[] = "0123456789ABCDEF";
 
 void print_unsigned(int u_num, int base){
     char buffer[32];
@@ -317,6 +294,10 @@ void printf(const char* fmt, ...){
             case 'x':   print_unsigned(va_arg(args, int),HEX);
                         break;
 
+            //b Stampa un numero in base 2
+            case 'b':   print_unsigned(va_arg(args, int),BIN);
+                        break;
+
             //% Stampa '%'
             case '%':   putc('%');
                         break;
@@ -344,15 +325,14 @@ int input(){
 
     int bb = 0;
 
-    bool end = false;
-
-    int howmany = 40;
-
+    int howmany = 32;
     char buffer[howmany];
+
+    bool end = false, restored = false;
 
     for (size_t cc = 0; cc < howmany; cc++)
         buffer[cc] = '\0';
-
+    
     do{
 
         int gotten = getc(x,y);
@@ -363,6 +343,20 @@ int input(){
                 //Se è un null non fare nulla
                 break;
 
+            //Freccia in sù = carica il comando precedente
+
+            case '\14':
+                putc('\b');
+                if (!restored && command){
+                    for (bb = 0; oldbuffer[bb] != 0; bb++){
+                        buffer[bb] = oldbuffer[bb];
+                        putc(buffer[bb]);
+                    }
+
+                    restored = true;
+                }
+                break;
+            
             //Invio
 
             case '\20':
@@ -455,6 +449,12 @@ int input(){
         }
 
     } while (end == false);
+
+    for (size_t ee = 0; ee < howmany && command; ee++)
+        oldbuffer[ee] = '\0';
+    
+    for (bb = 0; buffer[bb] != '\0' && command; bb++)
+        oldbuffer[bb] = buffer[bb];
     
     return buffer;
 }
@@ -517,6 +517,21 @@ void calcolatrice(){
     return;
 }
 
+//Convertitore
+
+void convertitore(){
+    
+    printf("\r\tInserisci il numero in base 10: ");
+    
+    int decnum = atoi(input());
+
+    printf("\r\tNumero in base H: %x",decnum);
+    printf("\r\tNumero in base 8: %o",decnum);
+    printf("\r\tNumero in base 2: %b",decnum);
+
+    return;
+}
+
 //Command mode
 
 void CMDode(){
@@ -524,27 +539,31 @@ void CMDode(){
     OSScreenInit();
     
     while (true){
+
+        command = true;
         
         char *Usercmd = (char*)input();
 
+        command = false;
+
         if (strcmps(Usercmd,"help") == 0){
             //help: restituisce i comandi
-            printf("\r\thelp: displays a list of commands\r\tversion: displays the OS version\r\tcalc: opens a calculator\r\tcls: clears the screen");
+            printf("\r\t%s",helpdoc);
             printf("\r%s",ready);
         } else if (strcmps(Usercmd,"version") == 0){
             //version: restituisce la versione
             printf("\r\tVersion: %s",NaitOS_v);
             printf("\r%s",ready);
         } else if (strcmps(Usercmd,"calc") == 0){
-            //calc: apre la calcolatrice (ancora molto base)
+            //calc: apre una semplice calcolatrice
             calcolatrice();
             printf("\r%s",ready);
         } else if (strcmps(Usercmd,"cls") == 0){
             //cls: pulisce lo schermo
             OSScreenInit();
-        } else if (strcmps(Usercmd,"get") == 0){
-            //cls: pulisce lo schermo
-            printf("\r\tX: %u Y: %u",get_cursor_position()%80,get_cursor_position()/80);
+        } else if (strcmps(Usercmd,"conv") == 0){
+            //conv: un semplice convertitore
+            convertitore();
             printf("\r%s",ready);
         } else {
             //Se non è stato inserito un comando valido, resituisci un errore
