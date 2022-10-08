@@ -12,7 +12,7 @@ int x = 0,  y = 0;
 bool normalprint = true, command = false;
 
 const char* ready = "Ready! > ";
-const char* NaitOS_v = "NaitOS Version 1.55";
+const char* NaitOS_v = "NaitOS Version 2.0";
 
 const char* helpdoc = "help: displays a list of commands\r\tversion: displays the OS version\r\tcalc: opens a calculator\r\tconv: opens a number converter\r\tcls: clears the screen";
 char oldbuffer[32] = "";
@@ -319,7 +319,7 @@ void printf(const char* fmt, ...){
     return;
 }
 
-//Input
+//Input (verrà sostituito da scanf)
 
 int input(){
 
@@ -459,6 +459,13 @@ int input(){
     return buffer;
 }
 
+//Scan per una string
+
+void scan_string(char* str){
+
+    *str = "lol";
+}
+
 //Da stringa ad int
 
 int atoi(const char *s_num){
@@ -541,7 +548,7 @@ void CMDode(){
     while (true){
 
         command = true;
-        
+
         char *Usercmd = (char*)input();
 
         command = false;
@@ -561,6 +568,13 @@ void CMDode(){
         } else if (strcmps(Usercmd,"cls") == 0){
             //cls: pulisce lo schermo
             OSScreenInit();
+        } else if (strcmps(Usercmd,"test") == 0){
+            printf("\r\tTest: ");
+            char* string = "icusubbui";
+            //scan_string(string);
+            scan_string(string);
+            printf("\r\t%s",string);
+            printf("\r%s",ready);
         } else if (strcmps(Usercmd,"conv") == 0){
             //conv: un semplice convertitore
             convertitore();
@@ -570,6 +584,7 @@ void CMDode(){
             printf("\r\tCommand not recognized, type ""help"" for a list of commands");
             printf("\r%s",ready);
         }
+
     }
     
     return;
