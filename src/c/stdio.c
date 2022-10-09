@@ -6,6 +6,7 @@
 #include "../header/stdio.h"
 #include "../header/in_asm.h"
 #include "../header/string.h"
+#include "../Drivers/timer.h"
 
 int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
@@ -588,61 +589,109 @@ void scanf(const char* fmt, ...){
 
 void calcolatrice(){
 
-    int num1,num2;
-    char segno;
+    int num1 = 0,num2 = 0,ris = 0;
+    char segno, reexec;
 
     printf("\r\tFirst number: ");
 
     scanf("%d",&num1);
-    
-    printf("\r\tSecond number: ");
-    
-    scanf("%d",&num2);
 
-    printf("\r\tOperator: ");
-    
-    scanf("%c",&segno);
-    
-    switch (segno){
-        case '+':
-            printf("\r\r\t%d + %d = %d",num1,num2,num1+num2);
-            break;
+    ris = num1;
 
-        case '-':
-            printf("\r\r\t%d - %d = %d",num1,num2,num1-num2);
+    do {
+
+        num1 = ris;
+
+        printf("\r\tSecond number: ");
+
+        scanf("%d",&num2);
+
+        printf("\r\tOperator: ");
+
+        scanf("%c",&segno);
+
+        switch (segno){
+            case '+':
+                ris += num2;
+                printf("\r\r\t%d + %d = %d",num1,num2,ris);
+                break;
+
+            case '-':
+                ris -= num2;
+                printf("\r\r\t%d - %d = %d",num1,num2,ris);
+                break;
+
+            case '*':
+                ris *= num2;
+                printf("\r\r\t%d * %d = %d",num1,num2,ris);
+                break;
+
+            case '/':
+                ris /= num2;
+                printf("\r\r\t%d / %d = %d",num1,num2,ris);
+                break;
+
+            case '%':
+                ris %= num2;
+                printf("\r\r\t%d %% %d = %d",num1,num2,ris);
+                break;
+
+            default:
+                printf("\r\r\tOperator not recognized...");
+                break;
+        }
+
+        printf("\r\r\tWould you like to perform other operations on the actual result? [S,N]: ");
+
+        scanf("%c",&reexec);
+
+        if (reexec != 'S' && reexec != 's'){
             break;
+        }
         
-        case '*':
-            printf("\r\r\t%d * %d = %d",num1,num2,num1*num2);
-            break;
-        
-        case '/':
-            printf("\r\r\t%d / %d = %d",num1,num2,num1/num2);
-            break;
-        
-        case '%':
-            printf("\r\r\t%d %% %d = %d",num1,num2,num1%num2);
-            break;
-        
-        default:
-            printf("\r\r\tOperator not recognized...");
-            break;
-    }
+    } while(true);
 
     return;
 }
 
 void convertitore(){
-    
-    int num;
 
-    printf("\r\tType the base 10 number: ");
-    
-    scanf("%d",num);
+    int base, num;
+    char* numbase;
 
-    printf("\r\tNumber in base H: %x",num);
-    printf("\r\tNumber in base 8: %o",num);
-    printf("\r\tNumber in base 2: %b",num);
+    printf("\r\tType the number's base you want to use [2,8,10,16]: ");
+    
+    scanf("%u",&base);
+
+    printf("\r\tType the number: ");
+
+    switch (base){
+        case 2:
+            numbase = "%b";
+            break;
+
+        case 8:
+            numbase = "%o";
+            break;
+
+        case 10:
+            numbase = "%u";
+            break;
+
+        case 16:
+            numbase = "%x";
+            break;
+
+        default:
+            break;
+    }
+
+    scanf(numbase,&num);
+
+    printf("\r\r\tBase H ---> %x",num);
+    printf("\r\tBase 10 --> %u",num);
+    printf("\r\tBase 8 ---> %o",num);
+    printf("\r\tBase 2 ---> %b",num);
 
     return;
 }
@@ -676,12 +725,6 @@ void CMDode(){
         } else if (strcmps(Usercmd,"cls") == 0){
             //cls: pulisce lo schermo
             OSScreenInit();
-        } else if (strcmps(Usercmd,"test") == 0){
-            //Test for scan function
-            char* str;
-            scanf("%s",str);
-            printf("\r%s",str);
-            printf("\r%s",ready);
         } else if (strcmps(Usercmd,"conv") == 0){
             //conv: un semplice convertitore
             convertitore();
