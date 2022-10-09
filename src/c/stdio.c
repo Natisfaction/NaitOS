@@ -17,8 +17,6 @@ const char* NaitOS_v = "NaitOS Version 2.0";
 const char* helpdoc = "help: displays a list of commands\r\tversion: displays the OS version\r\tcalc: opens a calculator\r\tconv: opens a number converter\r\tcls: clears the screen";
 char oldbuffer[32] = "";
 
-//Cursore
-
 void enable_cursor(uint8_t cursor_start, uint8_t cursor_end){
 	outb(0x3D4, 0x0A);
 	outb(0x3D5, (inb(0x3D5) & 0xC0) | cursor_start);
@@ -62,8 +60,6 @@ uint16_t get_cursor_position(){
 
 	return pos;
 }
-
-//Carattere
 
 int getc(int x, int y){
     volatile char* VGA = (volatile char*)0xB8000;
@@ -267,45 +263,45 @@ void printf(const char* fmt, ...){
             fmt++;
             switch (*fmt){
 
-            //i/d Stampano entrambi un numero con segno (nel caso fosse negativo)
-            case 'i':
-            case 'd':   print_signed(va_arg(args, int),DEC);
-                        break;
+                //i/d Stampano entrambi un numero con segno (nel caso fosse negativo)
+                case 'i':
+                case 'd':   print_signed(va_arg(args, int),DEC);
+                            break;
 
-            //u Stampa un numero senza segno
-            case 'u':   print_unsigned(va_arg(args, int),DEC);
-                        break;
+                //u Stampa un numero senza segno
+                case 'u':   print_unsigned(va_arg(args, int),DEC);
+                            break;
 
-            //s Stampa una string
-            case 's':   puts(va_arg(args, const char*));
-                        break;
+                //s Stampa una string
+                case 's':   puts(va_arg(args, const char*));
+                            break;
 
-            //c Stampa un char
-            case 'c':   putc((char)va_arg(args, int));
-                        break;
+                //c Stampa un char
+                case 'c':   putc((char)va_arg(args, int));
+                            break;
 
-            //o Stampa un numero in base 8
-            case 'o':   print_unsigned(va_arg(args, int),OCT);
-                        break;
+                //o Stampa un numero in base 8
+                case 'o':   print_unsigned(va_arg(args, int),OCT);
+                            break;
 
-            //x/X/p Stampano un numero in base 16 (anche i puntatori lavorano in esadecimale)
-            case 'p':
-            case 'X':
-            case 'x':   print_unsigned(va_arg(args, int),HEX);
-                        break;
+                //x/X/p Stampano un numero in base 16 (anche i puntatori lavorano in esadecimale)
+                case 'p':
+                case 'X':
+                case 'x':   print_unsigned(va_arg(args, int),HEX);
+                            break;
 
-            //b Stampa un numero in base 2
-            case 'b':   print_unsigned(va_arg(args, int),BIN);
-                        break;
+                //b Stampa un numero in base 2
+                case 'b':   print_unsigned(va_arg(args, int),BIN);
+                            break;
 
-            //% Stampa '%'
-            case '%':   putc('%');
-                        break;
+                //% Stampa '%'
+                case '%':   putc('%');
+                            break;
 
-            //Ignora in caso di carattere non consentito
-            default:    break;
+                //Ignora in caso di carattere non consentito
+                default:    break;
             }
-        break;
+            break;
 
         //Altrimenti resetto lo stato, e scrivo il carattere
         default:    putc(*fmt);
@@ -319,19 +315,94 @@ void printf(const char* fmt, ...){
     return;
 }
 
-//Input (verrà sostituito da scanf)
+int atoi(const char *s_num, int base){
 
-int input(){
+    int i_num;
+    int result = 0;
+    int num_sign = 1;
+
+    while (('-' == (*s_num)) || ((*s_num) == '+')){
+
+        if (*s_num == '-')
+            num_sign *= -1;
+        s_num++;
+    }
+
+    while (((*s_num >= '0') && (*s_num <= '9')) || ((*s_num >= 'A') && (*s_num <= 'F'))){
+        if ((*s_num >= '0') && (*s_num <= '9')){
+            i_num = *s_num - '0';
+        } else {
+            switch (*s_num){
+                case 'A':
+                    i_num = 10;
+                    break;
+                
+                case 'B':
+                    i_num = 11;
+                    break;
+                
+                case 'C':
+                    i_num = 12;
+                    break;
+                
+                case 'D':
+                    i_num = 13;
+                    break;
+                
+                case 'E':
+                    i_num = 14;
+                    break;
+                
+                case 'F':
+                    i_num = 15;
+                    break;
+                
+                case 'a':
+                    i_num = 10;
+                    break;
+                
+                case 'b':
+                    i_num = 11;
+                    break;
+                
+                case 'c':
+                    i_num = 12;
+                    break;
+                
+                case 'd':
+                    i_num = 13;
+                    break;
+                
+                case 'e':
+                    i_num = 14;
+                    break;
+                
+                case 'f':
+                    i_num = 15;
+                    break;
+                
+                default:
+                    break;
+            }
+        }
+        
+        result = (result * base) + i_num;
+        s_num++;
+    }
+
+    return (result * num_sign);
+}
+
+void scan_string(char* str){
 
     int bb = 0;
 
     int howmany = 32;
-    char buffer[howmany];
 
     bool end = false, restored = false;
 
     for (size_t cc = 0; cc < howmany; cc++)
-        buffer[cc] = '\0';
+        str[cc] = '\0';
     
     do{
 
@@ -349,8 +420,8 @@ int input(){
                 putc('\b');
                 if (!restored && command && bb == 0){
                     for (bb = 0; oldbuffer[bb] != 0; bb++){
-                        buffer[bb] = oldbuffer[bb];
-                        putc(buffer[bb]);
+                        str[bb] = oldbuffer[bb];
+                        putc(str[bb]);
                     }
 
                     restored = true;
@@ -371,7 +442,7 @@ int input(){
                 if (bb > 0){
                     printf("\b");
                     bb--;
-                    buffer[bb] = '\0';
+                    str[bb] = '\0';
                 }
                 break;
 
@@ -439,7 +510,7 @@ int input(){
 
             default:
                 printf("\b%c",gotten);
-                buffer[bb] = gotten;
+                str[bb] = gotten;
                 bb++;
                 break;
         }
@@ -453,103 +524,140 @@ int input(){
     for (size_t ee = 0; ee < howmany && command; ee++)
         oldbuffer[ee] = '\0';
     
-    for (bb = 0; buffer[bb] != '\0' && command; bb++)
-        oldbuffer[bb] = buffer[bb];
-    
-    return buffer;
+    for (bb = 0; str[bb] != '\0' && command; bb++)
+        oldbuffer[bb] = str[bb];
 }
 
-//Scan per una string
-
-void scan_string(char* str){
-
-    *str = "lol";
+void scan_int(int* i, int base){
+    char* strnum;
+    scan_string(strnum);
+    *i = atoi(strnum,base);
 }
 
-//Da stringa ad int
+void scan_char(char* c){
+    char* str;
+    scan_string(str);
+    *c = str[0];
+}
 
-int atoi(const char *s_num){
+void scanf(const char* fmt, ...){
+    va_list args;
+    va_start(args, fmt);
 
-    int result = 0;
-    int num_sign = 1;
+    while (*fmt){
+        switch (*fmt){
+        //Se lo trovo, mi preparo a riconoscere cosa dare in output
+        case '%':
+            fmt++;
+            switch (*fmt){
+                case 'u':
+                case 'i':
+                case 'd':   scan_int(va_arg(args, int),DEC);
+                            break;
 
-    while (('-' == (*s_num)) || ((*s_num) == '+')){
+                case 's':   scan_string(va_arg(args, char*));
+                            break;
 
-        if (*s_num == '-')
-            num_sign *= -1;
-        s_num++;
-    }
+                case 'c':   scan_char(va_arg(args, int));
+                            break;
 
-    while ((*s_num >= '0') && (*s_num <= '9')){
+                case 'o':   scan_int(va_arg(args, int),OCT);
+                            break;
+
+                case 'p':
+                case 'X':
+                case 'x':   scan_int(va_arg(args, int),HEX);
+                            break;
+
+                case 'b':   scan_int(va_arg(args, int),BIN);
+                            break;
+
+                default:    break;
+            }
+            break;
+
+        default:    break;
+        }
         
-        result = (result * 10) + ((*s_num) - '0');
-        s_num++;
+        fmt++;
     }
+    va_end(args);
 
-    return (result * num_sign);
+    return;
 }
-
-//Calcolatrice
 
 void calcolatrice(){
 
+    int num1,num2;
+    char segno;
+
     printf("\r\tFirst number: ");
 
-    char *num1ch = (char*)input();
-    int num1 = atoi(num1ch);
+    scanf("%d",&num1);
     
     printf("\r\tSecond number: ");
     
-    char *num2ch = (char*)input();
-    int num2 = atoi(num2ch);
+    scanf("%d",&num2);
 
     printf("\r\tOperator: ");
     
-    char *segnoch = (char*)input();
+    scanf("%c",&segno);
     
-    if (strcmps(segnoch,"+") == 0){
-        printf("\r\r\t%d + %d = %d",num1,num2,num1+num2);
-    } else if (strcmps(segnoch,"-") == 0){
-        printf("\r\r\t%d - %d = %d",num1,num2,num1-num2);
-    } else if (strcmps(segnoch,"*") == 0){
-        printf("\r\r\t%d * %d = %d",num1,num2,num1*num2);
-    } else if (strcmps(segnoch,"/") == 0){
-        printf("\r\r\t%d / %d = %d",num1,num2,num1/num2);
-    } else if (strcmps(segnoch,"%") == 0){
-        printf("\r\r\t%d %% %d = %d",num1,num2,num1%num2);
-    } else {
-        printf("\r\r\tOperator not recognized...");
+    switch (segno){
+        case '+':
+            printf("\r\r\t%d + %d = %d",num1,num2,num1+num2);
+            break;
+
+        case '-':
+            printf("\r\r\t%d - %d = %d",num1,num2,num1-num2);
+            break;
+        
+        case '*':
+            printf("\r\r\t%d * %d = %d",num1,num2,num1*num2);
+            break;
+        
+        case '/':
+            printf("\r\r\t%d / %d = %d",num1,num2,num1/num2);
+            break;
+        
+        case '%':
+            printf("\r\r\t%d %% %d = %d",num1,num2,num1%num2);
+            break;
+        
+        default:
+            printf("\r\r\tOperator not recognized...");
+            break;
     }
 
     return;
 }
 
-//Convertitore
-
 void convertitore(){
     
+    int num;
+
     printf("\r\tType the base 10 number: ");
     
-    int decnum = atoi(input());
+    scanf("%d",num);
 
-    printf("\r\tNumber in base H: %x",decnum);
-    printf("\r\tNumber in base 8: %o",decnum);
-    printf("\r\tNumber in base 2: %b",decnum);
+    printf("\r\tNumber in base H: %x",num);
+    printf("\r\tNumber in base 8: %o",num);
+    printf("\r\tNumber in base 2: %b",num);
 
     return;
 }
-
-//Command mode
 
 void CMDode(){
 
     OSScreenInit();
+
+    char *Usercmd;
     
     while (true){
 
         command = true;
 
-        char *Usercmd = (char*)input();
+        scan_string(Usercmd);
 
         command = false;
 
@@ -569,11 +677,10 @@ void CMDode(){
             //cls: pulisce lo schermo
             OSScreenInit();
         } else if (strcmps(Usercmd,"test") == 0){
-            printf("\r\tTest: ");
-            char* string = "icusubbui";
-            //scan_string(string);
-            scan_string(string);
-            printf("\r\t%s",string);
+            //Test for scan function
+            char* str;
+            scanf("%s",str);
+            printf("\r%s",str);
             printf("\r%s",ready);
         } else if (strcmps(Usercmd,"conv") == 0){
             //conv: un semplice convertitore
@@ -590,16 +697,12 @@ void CMDode(){
     return;
 }
 
-//Schermata del sistema operativo
-
 void OSScreenInit(){
     cls();
     printf("[%s]\r%s",NaitOS_v,ready);
     
     return;
 }
-
-//Schermata di errore (viene chiamata dalle routines)
 
 extern void ErrorScreenInit(){
     DEFAULT_COLOR = 0x4C;

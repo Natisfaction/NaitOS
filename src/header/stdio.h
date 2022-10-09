@@ -51,8 +51,12 @@ void print_signed(int si_num, int base);
 void printf(const char* fmt, ...);
 
 int input();
-int atoi(const char *s_num);
-int sign(const char* sign_string);
+int atoi(const char *s_num, int base);
+void scan_string(char* str);
+
+void scan_int(int* i ,int base);
+void scan_char(char* c);
+void scanf(const char* fmt, ...);
 
 //Schermo & errore
 
