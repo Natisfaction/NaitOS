@@ -51,12 +51,11 @@ main:
     mov sp, bp
 
     mov bx, KERNEL_LOCATION
-    mov dh, 80                  ;Aumenta il numero progressivamente quando aggiungi file
 
     ;Inizializzazione del disco
 
     mov ah, 0x02
-    mov al, dh 
+    mov al, 0x7f            ;Settori da leggere (il massimo (127))
     mov ch, 0x00
     mov dh, 0x00
     mov cl, 0x02
