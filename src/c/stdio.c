@@ -1,8 +1,3 @@
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdarg.h>
-
 #include "../header/stdio.h"
 #include "../header/in_asm.h"
 #include "../header/string.h"
@@ -10,12 +5,12 @@
 
 int DEFAULT_COLOR  =  0x1F;
 int x = 0,  y = 0;
-bool normalprint = true, command = false;
+bool normalprint = true, command = false, dark = true;
 
 const char* ready = "Ready! > ";
 const char* NaitOS_v = "NaitOS Version 2.0";
 
-const char* helpdoc = "help: displays a list of commands\r\tversion: displays the OS version\r\tcalc: opens a calculator\r\tconv: opens a number converter\r\tcls: clears the screen";
+const char* helpdoc = "help: displays a list of commands\r\tversion: displays the OS version\r\tcalc: opens a calculator\r\tconv: opens a number converter\r\tcls: clears the screen\r\ttris: opens Tris game";
 char oldbuffer[32] = "";
 
 void enable_cursor(uint8_t cursor_start, uint8_t cursor_end){
@@ -547,7 +542,9 @@ void scanf(const char* fmt, ...){
 
     while (*fmt){
         switch (*fmt){
-        //Se lo trovo, mi preparo a riconoscere cosa dare in output
+
+        //Se lo trovo, mi preparo a prendere in input
+
         case '%':
             fmt++;
             switch (*fmt){
@@ -586,6 +583,95 @@ void scanf(const char* fmt, ...){
 
     return;
 }
+
+void CMDode(){
+
+    //In caso di modifiche permanenti future...
+
+    if(dark)
+        DarkScreen();
+    else
+        LightScreen();
+    
+    //Codice principale
+
+    char *Usercmd;
+    
+    while (true){
+
+        command = true;
+
+        scan_string(Usercmd);
+
+        command = false;
+
+        if (strcmps(Usercmd,"help") == 0){
+            //help: restituisce i comandi
+            printf("\r\t%s",helpdoc);
+            printf("\r%s",ready);
+        } else if (strcmps(Usercmd,"version") == 0){
+            //version: restituisce la versione
+            printf("\r\tVersion: %s",NaitOS_v);
+            printf("\r%s",ready);
+        } else if (strcmps(Usercmd,"calc") == 0){
+            //calc: apre una semplice calcolatrice
+            calcolatrice();
+            printf("\r%s",ready);
+        } else if (strcmps(Usercmd,"cls") == 0){
+            //cls: pulisce lo schermo
+
+            if(dark)
+                DarkScreen();
+            else
+                LightScreen();
+
+        } else if (strcmps(Usercmd,"conv") == 0){
+            //conv: un semplice convertitore
+            convertitore();
+            printf("\r%s",ready);
+        } else if (strcmps(Usercmd,"snake") == 0){
+            //snake: il gioco
+            snake();
+            printf("\r%s",ready);
+        } else {
+            //Se non è stato inserito un comando valido, resituisci un errore
+            printf("\r\tCommand not recognized, type ""help"" for a list of commands");
+            printf("\r%s",ready);
+        }
+
+    }
+    
+    return;
+}
+
+void DarkScreen(){
+    DEFAULT_COLOR = 0x0A;
+    cls();
+    printf("[%s]\r%s",NaitOS_v,ready);
+    
+    return;
+}
+
+void LightScreen(){
+    DEFAULT_COLOR = 0xE0;
+    cls();
+    printf("[%s]\r%s",NaitOS_v,ready);
+    
+    return;
+}
+
+extern void ErrorScreen(){
+    DEFAULT_COLOR = 0x4C;
+    cls();
+    x = 0, y = 10;
+    printf("\t\t  / \\\t\t  NaitOS: There was an unexpected error and the OS crashed!!!\r\t\t / | \\\t\t\t\t Try to restart the computer to fix this issue\r\t\t/  .  \\");
+    x = 25, y = 13;
+    printf("\t ERROR: ");
+
+    return;
+}
+
+//Programmi
 
 void calcolatrice(){
 
@@ -696,64 +782,27 @@ void convertitore(){
     return;
 }
 
-void CMDode(){
+void snake(){
 
-    OSScreenInit();
+    int Field[WIDTH][HEIGHT];
 
-    char *Usercmd;
-    
-    while (true){
-
-        command = true;
-
-        scan_string(Usercmd);
-
-        command = false;
-
-        if (strcmps(Usercmd,"help") == 0){
-            //help: restituisce i comandi
-            printf("\r\t%s",helpdoc);
-            printf("\r%s",ready);
-        } else if (strcmps(Usercmd,"version") == 0){
-            //version: restituisce la versione
-            printf("\r\tVersion: %s",NaitOS_v);
-            printf("\r%s",ready);
-        } else if (strcmps(Usercmd,"calc") == 0){
-            //calc: apre una semplice calcolatrice
-            calcolatrice();
-            printf("\r%s",ready);
-        } else if (strcmps(Usercmd,"cls") == 0){
-            //cls: pulisce lo schermo
-            OSScreenInit();
-        } else if (strcmps(Usercmd,"conv") == 0){
-            //conv: un semplice convertitore
-            convertitore();
-            printf("\r%s",ready);
-        } else {
-            //Se non è stato inserito un comando valido, resituisci un errore
-            printf("\r\tCommand not recognized, type ""help"" for a list of commands");
-            printf("\r%s",ready);
-        }
-
-    }
-    
-    return;
-}
-
-void OSScreenInit(){
     cls();
-    printf("[%s]\r%s",NaitOS_v,ready);
-    
-    return;
-}
 
-extern void ErrorScreenInit(){
-    DEFAULT_COLOR = 0x4C;
-    cls();
-    x = 0, y = 10;
-    printf("\t\t  / \\\t\t  NaitOS: There was an unexpected error and the OS crashed!!!\r\t\t / | \\\t\t\t\t Try to restart the computer to fix this issue\r\t\t/  .  \\");
-    x = 25, y = 13;
-    printf("\t ERROR: ");
+    disable_cursor();
 
-    return;
+    normalprint = false;
+
+    for(size_t i = 0; i < HEIGHT; i++)
+        for(size_t j = 0; j < WIDTH; j++)
+            Field[j][i] = 1;
+
+    Field[1][1] = 0, Field[79][24] = 0;
+
+    for(size_t i = 0; i < HEIGHT; i++)
+        for(size_t j = 0; j < WIDTH; j++)
+            printf("%u",Field[j][i]);
+
+    for(;;);
+
+    normalprint = true;
 }

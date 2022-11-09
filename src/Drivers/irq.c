@@ -71,27 +71,20 @@ void irq_install(){
     idt_set_gate(45, (unsigned)irq13, 0x08, 0x8E);
     idt_set_gate(46, (unsigned)irq14, 0x08, 0x8E);
     idt_set_gate(47, (unsigned)irq15, 0x08, 0x8E);
-
-    for(int i = 0; i < 16; i++){
-        currentInterrupts[i] = 0;
-    }
 }
 
 
 extern void irq_handler(regs *r){
-    currentInterrupts[r -> int_no - 32] = 1;
     void (*handler)(struct regs *r);
 
 
-    handler = (void (*)(regs*))irq_routines[r->int_no - 32];
-    if (handler){
+    handler = irq_routines[r->int_no - 32];
+    if (handler)
         handler(r);
-    }
 
 
-    if (r->int_no >= 40){
+    if (r->int_no >= 40)
         outb(0xA0, 0x20);
-    }
 
 
     outb(0x20, 0x20);

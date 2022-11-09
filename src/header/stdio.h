@@ -1,6 +1,9 @@
 #pragma once
 
 #include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdarg.h>
 
 #define BLACK         0x0
 #define BLUE          0x1
@@ -61,5 +64,11 @@ void scanf(const char* fmt, ...);
 //Schermo & errore
 
 void CMDode();
-void OSScreenInit();
-extern void ErrorScreenInit();
+void DarkScreen();
+void LightScreen();
+
+extern void ErrorScreen();
+
+void calcolatrice();
+void convertitore();
+void snake();

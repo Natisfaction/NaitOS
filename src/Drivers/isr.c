@@ -110,7 +110,7 @@ const char* exception_messages[] =
 
 extern void fault_handler(struct regs *r){
     if (r->int_no < 32){
-		ErrorScreenInit();
+		ErrorScreen();
 		printf("%s",exception_messages[r->int_no]);
 		disable_cursor();
 		for(;;);		

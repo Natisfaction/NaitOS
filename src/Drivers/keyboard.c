@@ -1,6 +1,7 @@
-#include <stdbool.h>
 #include "../Drivers/keyboard.h"
 #include "../header/stdio.h"
+
+bool darkscreen = true;
 
 //SCANCODE SET 1
 
@@ -212,17 +213,20 @@ int computate(int digit){
                 break;
         }
     } else if (ctrl) {
+        switch (digit){
+            case 'c':
+                darkscreen = !darkscreen;
 
-        //Uncomment if you need to use Ctrl, but do not use puts
-
-        /* switch (digit){
-            case 'Something...':
-                putc('Something...');
+                if(darkscreen)
+                    DarkScreen();
+                else
+                    LightScreen();
+                
                 break;
 
             default:
                 break;
-        } */
+        }
     } else {
         putc(digit);
     }
