@@ -5,7 +5,7 @@
 
 ## What is NaitOS???
 
-NaitOS is an Operating System, currently discontinued, by a young man.
+NaitOS is an Operating System, currently discontinued, developed by a young man.
 
 At first, it was supposed to be a little challenge, but had became a really good passion.
 
