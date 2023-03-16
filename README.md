@@ -5,9 +5,9 @@
 
 ## What is NaitOS???
 
-NaitOS is an Operating System, currently under development, by a young man.
+NaitOS is an Operating System, currently discontinued, by a young man.
 
-At first, it was supposed to be a little challenge, but has now became a really good passion.
+At first, it was supposed to be a little challenge, but had became a really good passion.
 
 ## What are the current commands???
 
@@ -18,9 +18,7 @@ Right now, the OS has the following command:
  - *conv*    --> Opens a basic number converter
  - *cls*     --> Clears the screen
 
-    ***More coming up soon!!!***
-
-# Features
+# Features implemented
 
 Current features include:
  - **Bootloader** fully implemented
@@ -39,7 +37,7 @@ Current features include:
 
 ## What next???
 
-A lot of features are coming up in version 2.0 (not soon), the main ones are the following:
+Maybe in the future when I'll continue to work with this OS, the main planned features are the following:
  - **Memory management**
  - **File System** (FAT12)
 
