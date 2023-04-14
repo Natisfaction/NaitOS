@@ -1,22 +1,15 @@
-# NaitOS
+# NaitOS: my first self-developed OS.
 
-*Developing an OS just for fun purposes!!!*
+NaitOS is an Operating System based on i386 architecture, developed by me, a really passionate coder who loves low level coding. Right now I'm no longer writing more code for this OS, just because I moved on coding another UEFI-based OS with a friend of mine.
 
+# What are the commands NaitOS supports???
 
-## What is NaitOS???
-
-NaitOS is an Operating System, currently discontinued, based with *i386* architecture.
-
-At first, it was supposed to be a little challenge, but had became a really good passion.
-
-## What are the current commands???
-
-Right now, the OS has the following command:
- - *help*    --> Displays the command list
- - *version* --> Displays the OS version
- - *calc*    --> Opens a basic calculator
- - *conv*    --> Opens a basic number converter
- - *cls*     --> Clears the screen
+The OS has the following command:
+ - **help**    --> Displays the command list
+ - **version** --> Displays the OS version
+ - **calc**    --> Opens a basic calculator
+ - **conv**    --> Opens a basic number converter
+ - **cls**     --> Clears the screen
 
 # Features implemented
 
@@ -27,18 +20,14 @@ Current features include:
  - **Printing to screen** fully implemented
  - **Error management** fully implemented
 
-## How to...
+# How to...
 
 ...cross compile the OS???
- - To cross-compile the OS, you'll need to build an i686 cross compiler. You can watch this tutorial to learn how to do it: https://www.youtube.com/watch?v=TgIdFVOV_0U , or you can just download a pre-made cross-compiler from here: https://github.com/lordmilko/i686-elf-tools/releases . If you have done all the steps correctly, you'll only need to edit a bit the "cmp.sh" file, and it should work.
+ - To cross-compile the OS, you'll need to build an i686 cross compiler. You can watch [this](https://www.youtube.com/watch?v=TgIdFVOV_0U) tutorial to learn how to do it, or you can just download a pre-made cross-compiler from [here](https://github.com/lordmilko/i686-elf-tools/releases). If you have done all the steps correctly, you'll only need to edit a bit the "cmp.sh" file to adapt the directories, and it should compile perfectly.
 
 ...launch the OS???
- - To launch the OS, you'll need a specific emulator: *qemu-system-i386*. You can download it from https://www.qemu.org/download/
+ - To launch the OS, you'll need an **i386** or **i686** emulator: in my development i decided to use *qemu-system-i386*. You can download it from [here](https://www.qemu.org/download/).
 
-## What next???
+# What next???
 
-Maybe in the future when I'll continue to work with this OS, the main planned features are the following:
- - **Memory management**
- - **File System** (FAT12)
-
-***Stay tuned!!!***
+Sadly, as I already said, I'm not going to maintain this OS. It was my first-made OS, and I'd really like if it stays as it is right now!
