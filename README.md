@@ -30,4 +30,4 @@ Current features include:
 
 # What next???
 
-Sadly, as I already said, I'm not going to maintain this OS. It was my first-made OS, and I'd really like if it stays as it is right now!
+Sadly, as I already said, I'm not going to maintain this OS. It was my first-made OS, and I'd really like if it stays as it is right now! I personally like its imperfection, and I'd like to make NaitEFI better, with those things NaitOS doesn't have!
